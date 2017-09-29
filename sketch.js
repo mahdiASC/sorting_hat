@@ -16,6 +16,10 @@ function newStudent(){
     p.push(myRandom(10));
     p.push(myRandom(10));
     p.push(myRandom(10));
+    p.push(myRandom(["c1","c2","c3","c4"]));
+    p.push(myRandom(["c1","c2","c3","c4"]));
+    p.push(myRandom(["c1","c2","c3","c4"]));
+    p.push(myRandom(["c1","c2","c3","c4"]));
     return p.join(",");
 }
 

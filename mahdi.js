@@ -213,3 +213,7 @@ Array.prototype.flatten = function() {
     }
     return ret;
 };
+
+Object.defineProperty(Array.prototype,"last",{get: function(){
+  return this[this.length-1];
+}});

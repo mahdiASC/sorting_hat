@@ -1,40 +1,222 @@
 {
-    "id":1,
-    "text":"Question1",
-    "answers":[
-        {
-            "text":"Choice 1",
-            "outcome":{
-                "trait1": 1,
-                "trait2":-1
+    "0":{
+        "id": 1,
+        "text": "Question1?",
+        "answers": [
+            {
+                "text": "c1",
+                "outcome": {
+                    "trait1": 1,
+                    "trait2": -1
+                },
+                "sub_q": {
+                    "text": "SubQuestion1.1?",
+                    "answers": [
+                        {
+                            "text": "c1",
+                            "outcome": {
+                                "trait1": 1,
+                                "trait2": -1
+                            }
+                        },
+                        {
+                            "text": "c2",
+                            "outcome": {
+                                "trait1": -1,
+                                "trait2": 1
+                            }
+                        }
+                    ]
+                }
             },
-            "pointer_id":11
-        },
-        {
-            "text":"Choice 2",
-            "outcome":{
-                "trait1": -1,
-                "trait2":1
+            {
+                "text": "c2",
+                "outcome": {
+                    "trait1": -1,
+                    "trait2": 1
+                },
+                "sub_q": {
+                    "text": "SubQuestion1.2?",
+                    "answers": [
+                        {
+                            "text": "c1",
+                            "outcome": {
+                                "trait1": -1,
+                                "trait2": 1
+                            }
+                        },
+                        {
+                            "text": "c2",
+                            "outcome": {
+                                "trait1": 1,
+                                "trait2": -1
+                            }
+                        }
+                    ]
+                }
             },
-            "pointer_id":12
-        },
-        {
-            "text":"Choice 3",
-            "outcome":{
-                "trait3": 1,
-                "trait4":-1
+            {
+                "text": "c3",
+                "outcome": {
+                    "trait3": 1,
+                    "trait4": -1
+                },
+                "sub_q": {
+                    "text": "SubQuestion1.3?",
+                    "answers": [
+                        {
+                            "text": "c1",
+                            "outcome": {
+                                "trait3": 1,
+                                "trait4": -1
+                            }
+                        },
+                        {
+                            "text": "c2",
+                            "outcome": {
+                                "trait4": -1,
+                                "trait3": 1
+                            }
+                        }
+                    ]
+                }
             },
-            "pointer_id":13
-        },
-        {
-            "text":"Choice 4",
-            "outcome":{
-                "trait4": 1,
-                "trait3":-1
+            {
+                "text": "c4",
+                "outcome": {
+                    "trait4": 1,
+                    "trait3": -1
+                },
+                "sub_q": {
+                    "text": "SubQuestion1.4?",
+                    "answers": [
+                        {
+                            "text": "c1",
+                            "outcome": {
+                                "trait4": 1,
+                                "trait3": -1
+                            }
+                        },
+                        {
+                            "text": "c2",
+                            "outcome": {
+                                "trait3": -1,
+                                "trait4": 1
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "1":{
+        "id": 2,
+        "text": "Question2?",
+        "answers": [
+            {
+                "text": "c1",
+                "outcome": {
+                    "trait1": 1,
+                    "trait2": -1
+                },
+                "sub_q": {
+                    "text": "SubQuestion1.1?",
+                    "answers": [
+                        {
+                            "text": "c1",
+                            "outcome": {
+                                "trait1": 1,
+                                "trait2": -1
+                            }
+                        },
+                        {
+                            "text": "c2",
+                            "outcome": {
+                                "trait1": -1,
+                                "trait2": 1
+                            }
+                        }
+                    ]
+                }
             },
-            "pointer_id":14
-        }
-    ],
-    "pointer_id":2
-
+            {
+                "text": "c2",
+                "outcome": {
+                    "trait1": -1,
+                    "trait2": 1
+                },
+                "sub_q": {
+                    "text": "SubQuestion1.2?",
+                    "answers": [
+                        {
+                            "text": "c1",
+                            "outcome": {
+                                "trait1": -1,
+                                "trait2": 1
+                            }
+                        },
+                        {
+                            "text": "c2",
+                            "outcome": {
+                                "trait1": 1,
+                                "trait2": -1
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "text": "c3",
+                "outcome": {
+                    "trait3": 1,
+                    "trait4": -1
+                },
+                "sub_q": {
+                    "text": "SubQuestion1.3?",
+                    "answers": [
+                        {
+                            "text": "c1",
+                            "outcome": {
+                                "trait3": 1,
+                                "trait4": -1
+                            }
+                        },
+                        {
+                            "text": "c2",
+                            "outcome": {
+                                "trait4": -1,
+                                "trait3": 1
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "text": "c4",
+                "outcome": {
+                    "trait4": 1,
+                    "trait3": -1
+                },
+                "sub_q": {
+                    "text": "SubQuestion1.4?",
+                    "answers": [
+                        {
+                            "text": "c1",
+                            "outcome": {
+                                "trait4": 1,
+                                "trait3": -1
+                            }
+                        },
+                        {
+                            "text": "c2",
+                            "outcome": {
+                                "trait3": -1,
+                                "trait4": 1
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    }
 }

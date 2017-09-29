@@ -1,12 +1,14 @@
-//To do
+//To do for full game
 // Setup static website
 // using p5.js and p5.dom.js
 // play game
 // store data until game done
 // update datasheet
 
-// To Do
-// student data will include questions
+// To Do for sorting
+// Configure Questions data structure (linked list)
+// Give traversing students responsibility to student (should only ever execute once - otherwise delete - stored in property w/object?)
+
 
 // The sorting hat questions and application questions are abutted
 // Would be part of MOU and have host site complete the sorting test as well and use THAT
@@ -50,8 +52,34 @@ const parseObjects = function(header, arr){
 
 class Question extends _base{
     //linked list style
-    createFromJSON(obj){
+    
+}
 
+Question.createFromJSON = function(obj){
+    console.log(obj);
+    let output = [];
+    if(obj["id"]){
+        for(let i of Object.keys(obj)){
+            
+        }
+    }else{
+    }
+
+    if(output.lengh==1){
+        return output[0];
+    }
+
+}
+
+function createQ(obj){
+    let _q = new this(obj[i]);
+    if (_q.answers){
+        _q.answers.forEach(que => {
+            if(que["sub_q"]){
+                que["sub_q"] = this.createFromJSON(que["sub_q"]);
+            }
+        })
+        output.push(_q);
     }
 }
 
@@ -65,21 +93,18 @@ class Cohort extends _base{
     }
 }
 
-
-
-
 class Student extends _base{
     // class method for loading with csv
 
-    get calcTechScore(){
-        //finds anything with a "q" followed by a number
-        delete this.calcTechScore;
+    get techScore(){
+        //specifically finds anything with a "q" followed by a number
+        delete this.techScore;
         let re = new RegExp('q[0-9]+');
-        return this.calcTechScore = Object.getOwnPropertyNames(this).filter(x=>x.match(re)).reduce((sum,val)=>sum+Number(this[val]), 0)
+        return this.techScore = Object.getOwnPropertyNames(this).filter(x=>x.match(re)).reduce((sum,val)=>sum+Number(this[val]), 0)
     }
     
     //needed in order to reassign getter
-    set calcTechScore(param){
+    set techScore(param){
     }
 }
 
@@ -113,6 +138,7 @@ function setup(){
     });
    Cohort.createFromCSVString(data["cohorts"]);
    Student.createFromCSVString(data["students"]);
-//    Question.createFromJSON(data["questions"]);
+   Question.createFromJSON(data["questions"]);
 
 }
+
