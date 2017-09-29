@@ -1,0 +1,40 @@
+{
+    "id":1,
+    "text":"Question1",
+    "answers":[
+        {
+            "text":"Choice 1",
+            "outcome":{
+                "trait1": 1,
+                "trait2":-1
+            },
+            "pointer_id":11
+        },
+        {
+            "text":"Choice 2",
+            "outcome":{
+                "trait1": -1,
+                "trait2":1
+            },
+            "pointer_id":12
+        },
+        {
+            "text":"Choice 3",
+            "outcome":{
+                "trait3": 1,
+                "trait4":-1
+            },
+            "pointer_id":13
+        },
+        {
+            "text":"Choice 4",
+            "outcome":{
+                "trait4": 1,
+                "trait3":-1
+            },
+            "pointer_id":14
+        }
+    ],
+    "pointer_id":2
+
+}
