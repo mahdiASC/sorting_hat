@@ -6,8 +6,8 @@
             {
                 "text": "c1",
                 "outcome": {
-                    "trait1": 1,
-                    "trait2": -1
+                    "trait1": 2,
+                    "trait2": 1
                 },
                 "sub_q": {
                     "text": "SubQuestion1.1?",
@@ -15,15 +15,15 @@
                         {
                             "text": "c1",
                             "outcome": {
-                                "trait1": 1,
-                                "trait2": -1
+                                "trait1": 2,
+                                "trait2": 1
                             }
                         },
                         {
                             "text": "c2",
                             "outcome": {
-                                "trait1": -1,
-                                "trait2": 1
+                                "trait1": 1,
+                                "trait2": 2
                             }
                         }
                     ]
@@ -32,8 +32,8 @@
             {
                 "text": "c2",
                 "outcome": {
-                    "trait1": -1,
-                    "trait2": 1
+                    "trait1": 1,
+                    "trait2": 2
                 },
                 "sub_q": {
                     "text": "SubQuestion1.2?",
@@ -41,15 +41,15 @@
                         {
                             "text": "c1",
                             "outcome": {
-                                "trait1": -1,
-                                "trait2": 1
+                                "trait1": 1,
+                                "trait2": 2
                             }
                         },
                         {
                             "text": "c2",
                             "outcome": {
-                                "trait1": 1,
-                                "trait2": -1
+                                "trait1": 2,
+                                "trait2": 1
                             }
                         }
                     ]
@@ -58,8 +58,8 @@
             {
                 "text": "c3",
                 "outcome": {
-                    "trait3": 1,
-                    "trait4": -1
+                    "trait3": 2,
+                    "trait4": 1
                 },
                 "sub_q": {
                     "text": "SubQuestion1.3?",
@@ -67,15 +67,15 @@
                         {
                             "text": "c1",
                             "outcome": {
-                                "trait3": 1,
-                                "trait4": -1
+                                "trait3": 2,
+                                "trait4": 1
                             }
                         },
                         {
                             "text": "c2",
                             "outcome": {
-                                "trait4": -1,
-                                "trait3": 1
+                                "trait4": 1,
+                                "trait3": 2
                             }
                         }
                     ]
@@ -84,8 +84,8 @@
             {
                 "text": "c4",
                 "outcome": {
-                    "trait4": 1,
-                    "trait3": -1
+                    "trait4": 2,
+                    "trait3": 1
                 },
                 "sub_q": {
                     "text": "SubQuestion1.4?",
@@ -93,15 +93,15 @@
                         {
                             "text": "c1",
                             "outcome": {
-                                "trait4": 1,
-                                "trait3": -1
+                                "trait4": 2,
+                                "trait3": 1
                             }
                         },
                         {
                             "text": "c2",
                             "outcome": {
-                                "trait3": -1,
-                                "trait4": 1
+                                "trait3": 1,
+                                "trait4": 2
                             }
                         }
                     ]
@@ -116,8 +116,8 @@
             {
                 "text": "c1",
                 "outcome": {
-                    "trait1": 1,
-                    "trait2": -1
+                    "trait1": 2,
+                    "trait2": 1
                 },
                 "sub_q": {
                     "text": "SubQuestion1.1?",
@@ -125,15 +125,15 @@
                         {
                             "text": "c1",
                             "outcome": {
-                                "trait1": 1,
-                                "trait2": -1
+                                "trait1": 2,
+                                "trait2": 1
                             }
                         },
                         {
                             "text": "c2",
                             "outcome": {
-                                "trait1": -1,
-                                "trait2": 1
+                                "trait1": 1,
+                                "trait2": 2
                             }
                         }
                     ]
@@ -142,8 +142,8 @@
             {
                 "text": "c2",
                 "outcome": {
-                    "trait1": -1,
-                    "trait2": 1
+                    "trait1": 1,
+                    "trait2": 2
                 },
                 "sub_q": {
                     "text": "SubQuestion1.2?",
@@ -151,15 +151,15 @@
                         {
                             "text": "c1",
                             "outcome": {
-                                "trait1": -1,
-                                "trait2": 1
+                                "trait1": 1,
+                                "trait2": 2
                             }
                         },
                         {
                             "text": "c2",
                             "outcome": {
-                                "trait1": 1,
-                                "trait2": -1
+                                "trait1": 2,
+                                "trait2": 1
                             }
                         }
                     ]
@@ -168,8 +168,8 @@
             {
                 "text": "c3",
                 "outcome": {
-                    "trait3": 1,
-                    "trait4": -1
+                    "trait3": 2,
+                    "trait4": 1
                 },
                 "sub_q": {
                     "text": "SubQuestion1.3?",
@@ -177,15 +177,15 @@
                         {
                             "text": "c1",
                             "outcome": {
-                                "trait3": 1,
-                                "trait4": -1
+                                "trait3": 2,
+                                "trait4": 1
                             }
                         },
                         {
                             "text": "c2",
                             "outcome": {
-                                "trait4": -1,
-                                "trait3": 1
+                                "trait4": 1,
+                                "trait3": 2
                             }
                         }
                     ]
@@ -194,8 +194,8 @@
             {
                 "text": "c4",
                 "outcome": {
-                    "trait4": 1,
-                    "trait3": -1
+                    "trait4": 2,
+                    "trait3": 1
                 },
                 "sub_q": {
                     "text": "SubQuestion1.4?",
@@ -203,15 +203,15 @@
                         {
                             "text": "c1",
                             "outcome": {
-                                "trait4": 1,
-                                "trait3": -1
+                                "trait4": 2,
+                                "trait3": 1
                             }
                         },
                         {
                             "text": "c2",
                             "outcome": {
-                                "trait3": -1,
-                                "trait4": 1
+                                "trait3": 1,
+                                "trait4": 2
                             }
                         }
                     ]

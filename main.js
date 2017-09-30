@@ -148,10 +148,10 @@ class Cohort extends _base{
         }
 
         //adding student to cohort's list
-        this.waitlist.push({
-            student: student,
-            score: score
-        });
+        // this.waitlist.push({
+        //     student: student,
+        //     score: score
+        // });
 
         //adding cohort to student's list
         student.scores.push({
@@ -162,26 +162,39 @@ class Cohort extends _base{
         return score;
     }
 
-    sortStudents(){
-        //limit on class, pop out lower students (can sort all then slice?)
+    scoreStudents(){
         for(let student of Student.all){
             this.scoreStudent(student);
         }
-        this.waitlist.sort( (a,b) =>a.score-b.score);
-        return this.waitlist;
     }
+    // sortStudents(){
+    //     //limit on class, pop out lower students (can sort all then slice?)
+    //     for(let student of Student.all){
+    //         this.scoreStudent(student);
+    //     }
+    //     this.waitlist.sort( (a,b) =>a.score-b.score);
+    //     return this.waitlist;
+    // }
 
 
     popLowest(){
         //removes lowest scored student from class
         //sorts then pops
         this.class.sort( (a,b) =>a.score-b.score);
-        this.class.pop();
+        let student = this.class.pop();
+        delete student.cohort;
     }
     
     add_student(student){
         //adds student object to class (no limit)
+        //also adds cohort to student!
         this.class.push(student);
+        student.cohort = this.name; //take into account when pop
+    }
+
+    fullcheck(){
+        // returns true if class full
+        return this.class>=this.capacity;
     }
 }
 
@@ -189,12 +202,19 @@ Cohort.find_by_name = function(name){
     return Cohort.all.find(x=>x.name == name);
 }
 
-Cohort.fullSort = function(){
-    //sorts all student in each cohort
+// Cohort.fullSort = function(){
+//     //sorts all student in each cohort
+//     for(let cohort of Cohort.all){
+//         cohort.sortStudents();
+//     }
+// }
+
+Cohort.fullScore = function(){
     for(let cohort of Cohort.all){
-        cohort.sortStudents();
+        cohort.scoreStudents();
     }
 }
+
 
 class Student extends _base{
 
@@ -267,7 +287,7 @@ Student.fullSort = function(){
 class Sort{
     //in charge of sorting students appropriatetly
     constructor(){
-        Cohort.fullSort();
+        Cohort.fullScore();
         Student.fullSort();
         this.cohorts = Cohort.all;
         this.students = Student.all;
@@ -277,19 +297,33 @@ class Sort{
 
     call(){
         //does sorting algorithm;
-        this.firstRound();
-        
-        this.removeFromWaitlists();
+        this.fillRosters();
 
+        //prob not needed
         this.successiveRounds(); //based on sort priority
     }
 
-    firstRound(){
+
+    fillRosters(){
+        if(!(this.cohorts.reduce((sum,val)=>sum+Number(val.capacity),0)<this.students.length)){
+            throw new Error(`Number of students (${this.students.length}) insufficient to fill cohorts${this.cohorts.reduce((sum,val)=>sum+Number(val.capacity),0)}`);
+        }
+
+        let priority = 0; //start with first choice and keeps decreasing until cohorts filled.
+        while(this.unfilledCohorts().length>0){
+            this.fill_roster_by(priority);
+            priority ++;
+        }
+    }
+
+    fill_roster_by(num){
         //priority to first picks
         //first fill classes
         this.students.forEach(student=>{
-            let cohort = Cohort.find_by_name(student.scores[0].cohort);
-            cohort.add_student(student);
+            if (!student.cohort){
+                let cohort = Cohort.find_by_name(student.scores[num].cohort);
+                cohort.add_student(student);
+            }
         })
         //then wean out lowest scores
         this.cohorts.forEach(cohort=>{
@@ -298,18 +332,23 @@ class Sort{
             }
         })
 
+        // this.removeFromWaitlists();
     }
 
     successiveRounds(){
     }
 
-    removeFromWaitlists(){
-        //remove students in class if on waitlist for cohort
-    }
+    // removeFromWaitlists(){
+    //     //remove students in class if on waitlist for cohort
+    // }
 
     unfilledCohorts(){
         //returns array of unfilled Cohort objects
-        return this.cohorts.filter(x=>x.class.length>=x.capacity);
+        return this.cohorts.filter(x=>x.class.length<x.capacity);
+    }
+
+    get waitlist(){
+        return this.students.filter(s=>!!s.cohort);
     }
 }
 

@@ -27,10 +27,10 @@ function newCohort(){
     let p =[];
     p.push(randName());
     p.push(myRandom(15,25));
-    p.push(myRandom(1,10));
-    p.push(myRandom(1,10));
-    p.push(myRandom(1,10));
-    p.push(myRandom(1,10));
+    p.push(myRandom(1,8));
+    p.push(myRandom(1,8));
+    p.push(myRandom(1,8));
+    p.push(myRandom(1,8));
     return p.join(",");
 }
 
