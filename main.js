@@ -6,8 +6,6 @@
 // update datasheet
 
 // To Do for sorting
-// create scoring calculation for all students
-// sort students
 // create algorithm for sorting students
 // --competition and prioritization
 // take into account waitlist?
@@ -126,6 +124,8 @@ Question.createFromJSON = function(obj){
 class Cohort extends _base{
     constructor(params){
         super();
+        this.class = [];
+        this.waitlist = [];
         this.ideal_stats = {};
         this.name = params.name;
         this.capacity = params.capacity;
@@ -146,27 +146,29 @@ class Cohort extends _base{
             let diff = Math.abs(student.stats[key] - this.ideal_stats[key]);
             score += Math.pow(diff,2);
         }
-        if (!this.class){
-            this.class=[];
-        }
-        this.class.push({
+
+        //adding student to cohort's list
+        this.waitlist.push({
             student: student,
             score: score
         });
+
+        //adding cohort to student's list
+        student.scores.push({
+            "cohort":this.name,
+            "score":score
+        })
+
         return score;
     }
 
     sortStudents(){
-        this.class = [];
         //limit on class, pop out lower students (can sort all then slice?)
         for(let student of Student.all){
             this.scoreStudent(student);
-            // if(this.class.length>this.capacity){
-            //     this.popLowest();
-            // }
         }
-        this.class.sort( (a,b) =>a.score-b.score);
-        return this.class;
+        this.waitlist.sort( (a,b) =>a.score-b.score);
+        return this.waitlist;
     }
 
 
@@ -176,20 +178,30 @@ class Cohort extends _base{
         this.class.sort( (a,b) =>a.score-b.score);
         this.class.pop();
     }
+    
+    add_student(student){
+        //adds student object to class (no limit)
+        this.class.push(student);
+    }
 }
 
+Cohort.find_by_name = function(name){
+    return Cohort.all.find(x=>x.name == name);
+}
 
 Cohort.fullSort = function(){
     //sorts all student in each cohort
     for(let cohort of Cohort.all){
         cohort.sortStudents();
     }
-    
 }
 
 class Student extends _base{
-    // class method for loading with csv
 
+    constructor(params){
+        super(params);
+        this.scores = [];
+    }
     get techScore(){
         if (this._ts!==undefined){
             return this._ts;
@@ -241,11 +253,64 @@ class Student extends _base{
     //needed in order to reassign getter
     set stats(params){
     }
+
+    //sorts list of cohorts by lowest priority
+    selfSort(){
+        this.scores = this.scores.sort( (a,b) =>a.score-b.score);
+    }
+}
+
+Student.fullSort = function(){
+    Student.all.forEach(x=>x.selfSort());
 }
 
 class Sort{
     //in charge of sorting students appropriatetly
+    constructor(){
+        Cohort.fullSort();
+        Student.fullSort();
+        this.cohorts = Cohort.all;
+        this.students = Student.all;
+        this.priorities = data.priorities;
+        this.priorityList = this.students.sort((a,b)=>a.score-b.score);
+    }
 
+    call(){
+        //does sorting algorithm;
+        this.firstRound();
+        
+        this.removeFromWaitlists();
+
+        this.successiveRounds(); //based on sort priority
+    }
+
+    firstRound(){
+        //priority to first picks
+        //first fill classes
+        this.students.forEach(student=>{
+            let cohort = Cohort.find_by_name(student.scores[0].cohort);
+            cohort.add_student(student);
+        })
+        //then wean out lowest scores
+        this.cohorts.forEach(cohort=>{
+            while(cohort.class.length>cohort.capacity){
+                cohort.popLowest();
+            }
+        })
+
+    }
+
+    successiveRounds(){
+    }
+
+    removeFromWaitlists(){
+        //remove students in class if on waitlist for cohort
+    }
+
+    unfilledCohorts(){
+        //returns array of unfilled Cohort objects
+        return this.cohorts.filter(x=>x.class.length>=x.capacity);
+    }
 }
 
 let cohorts, questions, students;
