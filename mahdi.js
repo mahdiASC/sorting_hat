@@ -201,19 +201,28 @@ function contains(a, obj) {
 };
 
 
-Array.prototype.flatten = function() {
-  //adds flatten as an Array method (not a bang method)
-    var ret = [];
-    for(var i = 0; i < this.length; i++) {
-        if(Array.isArray(this[i])) {
-            ret = ret.concat(this[i].flatten());
-        } else {
-            ret.push(this[i]);
-        }
-    }
-    return ret;
-};
+
+// Array.prototype.flatten = () => {
+//   var ret = [];
+//   for(var i = 0; i < this.length; i++) {
+//       if(Array.isArray(this[i])) {
+//           ret = ret.concat(this[i].flatten());
+//       } else {
+//           ret.push(this[i]);
+//       }
+//   }
+//   return ret;
+// };
+
+// Array.prototype.flatten = function() {
+//   //adds flatten as an Array method (not a bang method)
+    
+// };
 
 Object.defineProperty(Array.prototype,"last",{get: function(){
   return this[this.length-1];
+}});
+
+Object.defineProperty(Array.prototype,"first",{get: function(){
+  return this[0];
 }});

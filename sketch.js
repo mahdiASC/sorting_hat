@@ -17,9 +17,9 @@ function newStudent(){
     p.push(myRandom(10));
     p.push(myRandom(10));
     p.push(myRandom(["c1","c2","c3","c4"]));
+    p.push(myRandom(["c1","c2"]));
     p.push(myRandom(["c1","c2","c3","c4"]));
-    p.push(myRandom(["c1","c2","c3","c4"]));
-    p.push(myRandom(["c1","c2","c3","c4"]));
+    p.push(myRandom(["c1","c2"]));
     return p.join(",");
 }
 
@@ -31,16 +31,14 @@ function newCohort(){
     p.push(myRandom(1,10));
     p.push(myRandom(1,10));
     p.push(myRandom(1,10));
-    p.push(myRandom(1,10));
-    p.push(myRandom(1,10));
     return p.join(",");
 }
 
 function setup(){
     noCanvas();
-    for (let i = 0; i < 200 ; i ++){
-        createP(newStudent());
-        // createP(newCohort());
+    for (let i = 0; i < 20 ; i ++){
+        // createP(newStudent());
+        createP(newCohort());
     }
 }
 
