@@ -379,6 +379,7 @@ function setup(){
    Cohort.createFromCSVString(data["cohorts"]);
    
    //eventually want this to pull from Google Spreadsheet
+   //No go - spreadsheet would need to be public
    Student.createFromCSVString(data["students"]);
 
    Question.createFromJSON(data["questions"]);
