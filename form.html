@@ -20,27 +20,29 @@
 
     <div class="questions">
 
-        <form id="form" onsubmit="sendData()">
+        <form id="form" target="no-target" action="" method="post">
                         
             <fieldset>
                 <label>Name:</label>
-                <input id="name" type="text" name="name">
+                <input id="name" type="text" name="name" value="bob">
             </fieldset>
             
             <fieldset>
                 <label>Email:</label>
-                <input id="email" type="text" name="email">
+                <input id="email" type="text" name="email" value="bob@gmail.com">
             </fieldset>
 
             <fieldset>
                 <label>Grade:</label>
-                <input type="radio" value="11th" name="grade">
-                <input type="radio" value="10th" name="grade">
+                <input type="radio" value="11th" name="grade" checked>11th</input>
+                <input type="radio" value="10th" name="grade">10th</input>
             </fieldset>
         
             <input id="superspecialbutton" type="submit" value="Apply!">
         </form>
     </div>
+
+    <iframe src="#" id="no-target" name="no-target" style="visibility:hidden"></iframe>
     <!-- end of questions -->
     <style>
         body {
