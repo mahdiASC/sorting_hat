@@ -5,44 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Form</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.14/p5.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.14/addons/p5.dom.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.14/p5.js"></script> -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.14/addons/p5.dom.js"></script> -->
     <!-- jquery -->
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
     
-    <script src="mahdi.js"></script>
-    <script src="form.js"></script>
+    <!-- <script src="mahdi.js"></script> -->
 </head>
 <body>
     <h2>ASC Application 2018</h2>
-
+    
     <h3>Demographics</h3>
-
+    
     <div class="questions">
-
-        <form id="form" target="no-target" action="" method="post">
-                        
-            <fieldset>
-                <label>Name:</label>
-                <input id="name" type="text" name="name" value="bob">
-            </fieldset>
-            
-            <fieldset>
-                <label>Email:</label>
-                <input id="email" type="text" name="email" value="bob@gmail.com">
-            </fieldset>
-
-            <fieldset>
-                <label>Grade:</label>
-                <input type="radio" value="11th" name="grade" checked>11th</input>
-                <input type="radio" value="10th" name="grade">10th</input>
-            </fieldset>
         
+        <form id="form" target="_blank" method="get" onsubmit="reset()">
+            
+            <label>Whatever</label>
+            <input type="text" name="entry.1466968445" id="entry.1466968445">
+            
             <input id="superspecialbutton" type="submit" value="Apply!">
         </form>
     </div>
-
-    <iframe src="#" id="no-target" name="no-target" style="visibility:hidden"></iframe>
+    
+    <!-- <iframe src="#" id="no-target" name="no-target" style="visibility:hidden"></iframe> -->
     <!-- end of questions -->
     <style>
         body {
@@ -66,5 +52,6 @@
             color:rgba(0,0,0,0);
         }
     </style>
+    <script src="form.js"></script>
     </body>
     </html>
