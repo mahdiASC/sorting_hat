@@ -286,6 +286,15 @@ Student.fullSort = function(){
 
 class Sort{
     //in charge of sorting students appropriatetly
+
+    // will take prorities into account
+    // ~20% of non-black or latino
+    // average cs experience of +/- 1 student
+    // average grade +/- 1 student
+    // score on location (logged?) pulled from Google Maps API
+    // average school_type +/- 3 students
+
+
     constructor(){
         Cohort.fullScore();
         Student.fullSort();
@@ -299,21 +308,23 @@ class Sort{
         //does sorting algorithm;
         this.fillRosters();
 
-        //prob not needed
-        this.successiveRounds(); //based on sort priority
+        //creates waitlist
+        this.createWaitlist();
     }
 
 
     fillRosters(){
-        if(!(this.cohorts.reduce((sum,val)=>sum+Number(val.capacity),0)<this.students.length)){
-            throw new Error(`Number of students (${this.students.length}) insufficient to fill cohorts${this.cohorts.reduce((sum,val)=>sum+Number(val.capacity),0)}`);
-        }
+    	//fills cohorts based on threshold restricitons and student priorities
+    	// for any remaining cohorts, waitlists are assessed and filled by student priorities only
+        // if(!(this.cohorts.reduce((sum,val)=>sum+Number(val.capacity),0)<this.students.length)){
+        //     throw new Error(`Number of students (${this.students.length}) insufficient to fill cohorts${this.cohorts.reduce((sum,val)=>sum+Number(val.capacity),0)}`);
+        // }
 
-        let priority = 0; //start with first choice and keeps decreasing until cohorts filled.
-        while(this.unfilledCohorts().length>0){
-            this.fill_roster_by(priority);
-            priority ++;
-        }
+        // let priority = 0; //start with first choice and keeps decreasing until cohorts filled.
+        // while(this.unfilledCohorts().length>0){
+        //     this.fill_roster_by(priority);
+        //     priority ++;
+        // }
     }
 
     fill_roster_by(num){
@@ -335,12 +346,10 @@ class Sort{
         // this.removeFromWaitlists();
     }
 
-    successiveRounds(){
+	createWaitlist(){
+        //creates waitlist
+        this.waitlist = this.students.filter(s=>!s.cohort);
     }
-
-    // removeFromWaitlists(){
-    //     //remove students in class if on waitlist for cohort
-    // }
 
     unfilledCohorts(){
         //returns array of unfilled Cohort objects
@@ -357,6 +366,7 @@ let cohorts, questions, students;
 
 let files = ["cohorts","priorities","students"];
 let data = {};
+
 function setup(){
     noCanvas();
     //loading cohorts, priorities, and students
