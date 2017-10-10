@@ -63,7 +63,7 @@ function newStudent(){
     p.push(myRandom(["c1","c2"]));
     p.push(myRandom(["c1","c2","c3","c4"]));
     p.push(myRandom(["c1","c2"]));
-    return p.join(",");
+    return p.join("+");
 }
 
 function newCohort(){
@@ -75,7 +75,7 @@ function newCohort(){
     p.push(myRandom(1,8));
     p.push(myRandom(1,8));
     p.push(myRandom(1,8));
-    return p.join(",");
+    return p.join("+");
 }
 
 function setup(){

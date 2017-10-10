@@ -1,3 +1,5 @@
+// NOTE: csv need "+" as delimiter
+
 //To do for full game
 // Setup static website
 // using p5.js and p5.dom.js
@@ -33,7 +35,9 @@ class _base{
 _base.createFromCSVString = function(fileString){
     let self = this;
     return Papa.parse(fileString, {
+        delimiter:"+",
         complete: function(results) {
+            console.log(results);
             let header = results.data[0];
             for ( let i = 1; i < results.data.length; i++){
                 parseObjects.apply(self,[header,results.data[i]]);
@@ -50,6 +54,12 @@ const parseObjects = function(header, arr){
     new this(output);
 }
 
+_base.createFromJSON = function(json_obj){
+    // let self = this;
+    for(let i of json_obj){
+        new this(i);
+    }
+}  
 
 class Question extends _base{
 
@@ -176,7 +186,6 @@ class Cohort extends _base{
     //     return this.waitlist;
     // }
 
-
     popLowest(){
         //removes lowest scored student from class
         //sorts then pops
@@ -294,7 +303,6 @@ class Sort{
     // score on location (logged?) pulled from Google Maps API
     // average school_type +/- 3 students
 
-
     constructor(){
         Cohort.fullScore();
         Student.fullSort();
@@ -363,8 +371,12 @@ class Sort{
 
 let cohorts, questions, students;
 [cohorts, questions, students] = [[],[],[]];
+// DO I STILL NEED THIS?
 
-let files = ["cohorts","priorities","students"];
+let files = [];
+files.push("cohorts");
+files.push("priorities");
+
 let data = {};
 
 function setup(){
@@ -378,6 +390,10 @@ function setup(){
             success:x=>data[file]=x
         });
     }
+
+    // not elegant solution
+    files.push("students");
+
     //loading questions as JSON
     $.get({
         url:"questions.json",
@@ -386,13 +402,36 @@ function setup(){
         success:x=>data["questions"]=x
     });
    
-   Cohort.createFromCSVString(data["cohorts"]);
-   
+    //loading students as JSON (from previous load)
+    if(!files.includes("students")){
+        // console.log("Make sure to run this from node.js first!");
+        $.get({
+            url:"students.json",
+            async: false,
+            dataType:'json',
+            success:x=>Student.createFromJSON(x)
+        });
+    }else{
+        $.get({
+            url:"students.csv",
+            async: false,
+            dataType:'text',
+            success:x=>Student.createFromCSVString(x)
+        });
+    }
+        
    //eventually want this to pull from Google Spreadsheet
    //No go - spreadsheet would need to be public
-   Student.createFromCSVString(data["students"]);
+   
 
-   Question.createFromJSON(data["questions"]);
-
+//    If any student is missing distance
+    // if(Student.any(x=>!x.distance)){
+    //     // add distances and save new csv
+    //     // Student.add_distances();
+    //     saveCSV(Student.all);
+    //     throw new Error("Make sure to include distances! Run the 'set_locations.js' script in node.js");
+    // }
+    Cohort.createFromCSVString(data["cohorts"]);
+    Question.createFromJSON(data["questions"]);
 }
 
