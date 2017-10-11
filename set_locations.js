@@ -6,8 +6,7 @@ let fs = require("fs"); //filesystem
 //     if(!files.includes("studentsL.csv")){
 //         addLocations();
 //     }else{
-//         console.log("File: 'studentsL.csv' already exists");
-//     }
+//         console.log("Fi: 'studentsL.csv' already exists")//     },
 // })
 // let x;
 
@@ -27,9 +26,30 @@ let fs = require("fs"); //filesystem
 //     // also pinging API for location distance
 // }
 
+student = {
+  address:"348 Cruisers Dr Polk City, FL 33868-5127",
+  email:"Ado@gmail.com",
+  grade:"10",
+  name:"Ufene Ber",
+  parent_email:"Jas@gmail.com",
+  parent_name:"Non Padus",
+  parent_phone:"753-469-9164",
+  phone:"154-682-1159",
+  prev_cs:"no",
+  q1:"5",
+  q2:"2",
+  q3:"3",
+  q4:"1",
+  q5:"1",
+  s1:"c1",
+  s2:"c2",
+  s3:"c4",
+  s4:"c2",
+  school_type:"charter",
+  scores:[]
+}
 
-
-fs.writeFile(JSON.stringify(data), 'students.json', (err) => {
-    if (err) throw err;
-    console.log('The file has been saved!');
-  });
+fs.writeFile("students.json",JSON.stringify([student,student,student]), (err) => {
+  if (err) throw err;
+  console.log('The file has been saved!');
+});

@@ -1,4 +1,9 @@
 // NOTE: csv need "+" as delimiter
+//if 'student.json' exists, should use to reduce API calls
+let useStudentJSON = false;
+let api_key = 'AIzaSyDlA_pTF7IbYhUehFHwmZZZW9Cs9GbVGS8';
+let directionsService = new google.maps.DirectionsService();
+let secDelay = 1;//delay in seconds for api call
 
 //To do for full game
 // Setup static website
@@ -18,85 +23,77 @@
 // as metric for sorting cohort students
 
 // worry about waitlist peeps
-class _base{
+class _base {
     //handles basic initialization and ALL storage for each
     //extended class
-    constructor(params){
-        if (!this.constructor.all){
-        this.constructor.all = []
+    constructor(params) {
+        if (!this.constructor.all) {
+            this.constructor.all = []
         }
         this.constructor.all.push(this);
-        for(let i in params){
-            this[i]=params[i];
+        for (let i in params) {
+            this[i] = params[i];
         }
     }
 }
 
-_base.createFromCSVString = function(fileString){
+_base.createFromCSVString = function (fileString) {
     let self = this;
     return Papa.parse(fileString, {
-        delimiter:"+",
-        complete: function(results) {
-            console.log(results);
+        delimiter: "+",
+        complete: function (results) {
             let header = results.data[0];
-            for ( let i = 1; i < results.data.length; i++){
-                parseObjects.apply(self,[header,results.data[i]]);
+            for (let i = 1; i < results.data.length; i++) {
+                parseObjects.apply(self, [header, results.data[i]]);
             }
         }
     });
-}  
+}
 
-const parseObjects = function(header, arr){
+const parseObjects = function (header, arr) {
     let output = {};
-    for ( let x in header){
-        output[header[x]]=arr[x];
+    for (let x in header) {
+        output[header[x]] = arr[x];
     }
     new this(output);
 }
 
-_base.createFromJSON = function(json_obj){
-    // let self = this;
-    for(let i of json_obj){
-        new this(i);
-    }
-}  
+class Question extends _base {
 
-class Question extends _base{
-
-    outcome(choice){
-        return this.answers.find(c=>c.text==choice).outcome;
+    outcome(choice) {
+        return this.answers.find(c => c.text == choice).outcome;
     }
 }
 
 Question.first = () => {
-    return Question.all.find(x=> Number(x.id)==1);
+    return Question.all.find(x => Number(x.id) == 1);
 };
 
-Question.next = (q,choice) => {
+Question.next = (q, choice) => {
     //accepts arguments of a Question object
     //returns the next logical Question object by traversing linkage backwards
     //handles sub_q
-    let found = q.answers.find(x=>x.text == choice);
-    if(Object.keys(found).some(key=>key=="sub_q")){
+    let found = q.answers.find(x => x.text == choice);
+    if (Object.keys(found).some(key => key == "sub_q")) {
         return found.sub_q;
-    }else{
+    } else {
         //backtrack 
         let root = Question.rootq(q);
-        if (!root){
+        if (!root) {
             return undefined;
         }
-        return Question.find(Number(root.id)+1);
+        return Question.find(Number(root.id) + 1);
     }
 }
 
 Question.rootq = q => {
     //finds root question (with an id) of input Question object
     let output = q.parent
-    if(!output){
+    if (!output) {
         return undefined;
     }
     let attempt = output.parent;
-    while(attempt!==undefined){
+    while (attempt !== undefined) {
         output = attempt;
         attempt = attempt.parent;
     }
@@ -105,151 +102,185 @@ Question.rootq = q => {
 
 Question.find = num => {
     //find question with id == num
-    return Question.all.find(q=>Number(q.id) == num);
+    return Question.all.find(q => Number(q.id) == num);
 }
 
-Question.createFromJSON = function(obj){
+Question.createFromJSON = function (obj) {
     //linked list styled questions
     //recursively creates questions w/subquestions
-    if(obj["text"]){
+    if (obj["text"]) {
         //single question
         let q = new this(obj);
-        
-        q.answers.forEach(a =>{
-            if(a.sub_q){
+
+        q.answers.forEach(a => {
+            if (a.sub_q) {
                 a.sub_q = Question.createFromJSON(a.sub_q);
                 a.sub_q.parent = q;
-            } 
+            }
         });
         return q;
-    }else{
+    } else {
         //multiple questions
-        for(let i of Object.keys(obj)){
+        for (let i of Object.keys(obj)) {
             Question.createFromJSON(obj[i]);
         }
     }
 }
 
 
-class Cohort extends _base{
-    constructor(params){
+class Cohort extends _base {
+    constructor(params) {
         super();
         this.class = [];
         this.waitlist = [];
         this.ideal_stats = {};
         this.name = params.name;
         this.capacity = params.capacity;
-        let statKeys = Object.keys(params).filter(key=>key!="name" && key!="capacity");
-        for(let i of statKeys){
+        this.location = params.location;
+        let statKeys = Object.keys(params).filter(key => !Object.keys(this).includes(key));
+        for (let i of statKeys) {
             this.ideal_stats[i] = Number(params[i]);
         }
     }
 
-    scoreStudent(student){
+    scoreStudent(student) {
         //scores a single student
         // uses total R^2 (ideal candidate has R^2 of 0)
         let score = 0;
-        for (let key of Object.keys(this.ideal_stats)){
-            if(!student.stats[key]){
+        for (let key of Object.keys(this.ideal_stats)) {
+            if (!student.stats[key]) {
                 student.stats[key] = 0;
             }
             let diff = Math.abs(student.stats[key] - this.ideal_stats[key]);
-            score += Math.pow(diff,2);
+            score += Math.pow(diff, 2);
         }
-
-        //adding student to cohort's list
-        // this.waitlist.push({
-        //     student: student,
-        //     score: score
-        // });
 
         //adding cohort to student's list
         student.scores.push({
-            "cohort":this.name,
-            "score":score
+            "cohort": this.name,
+            "score": score
         })
 
-        return score;
+        // return score;
     }
 
-    scoreStudents(){
-        for(let student of Student.all){
+    distStudent(student, delay) {
+        //makes api request for distance
+        // if(Student.all.all(x=>!!x.distance))
+        setTimeout(function(){
+            let origin = student.address;
+            let dest = this.location;
+            var request = {
+                origin: origin.replace(" ", "+"),
+                destination: dest.replace(" ", "+"),
+                travelMode: google.maps.DirectionsTravelMode.DRIVING
+            };
+            console.log(student);
+            // directionsService.route(request, function (response, status) {
+            //     let num;
+            //     if (status == google.maps.DirectionsStatus.OK) {
+            //        num = response.routes[0].legs[0].distance.value // the distance in metres
+            //     } else {
+            //         num = Infinity;
+            //         console.log("Error: " + status);
+            //     }
+            //     student.distances.push({
+            //         "cohort": this.name,
+            //         "distance": num // the distance in metres
+            //     });
+            // });
+            if(Student.all.all(x=>!!x.distances[this.name])){
+                addStudentDownload();
+            }
+        }, delay);
+    }
+
+    scoreStudents() {
+        //trying not to flood the api!
+        let timer = 0; //millisecond delay
+        for (let student of Student.all) {
             this.scoreStudent(student);
+            this.distStudent(student, timer);
+            timer += secDelay*1000;
         }
     }
-    // sortStudents(){
-    //     //limit on class, pop out lower students (can sort all then slice?)
-    //     for(let student of Student.all){
-    //         this.scoreStudent(student);
-    //     }
-    //     this.waitlist.sort( (a,b) =>a.score-b.score);
-    //     return this.waitlist;
-    // }
 
-    popLowest(){
+    popLowest() {
         //removes lowest scored student from class
         //sorts then pops
-        this.class.sort( (a,b) =>a.score-b.score);
+        this.class.sort((a, b) => a.score - b.score);
         let student = this.class.pop();
         delete student.cohort;
     }
-    
-    add_student(student){
+
+    add_student(student) {
         //adds student object to class (no limit)
         //also adds cohort to student!
         this.class.push(student);
         student.cohort = this.name; //take into account when pop
     }
 
-    fullcheck(){
+    remove_student(student){
+        console.log("NEEDS TO BE CODED");
+    }
+
+    fullcheck() {
         // returns true if class full
-        return this.class>=this.capacity;
+        return this.class >= this.capacity;
     }
 }
 
-Cohort.find_by_name = function(name){
-    return Cohort.all.find(x=>x.name == name);
+addStudentDownload = function(){
+    let url = makeTextFile(JSON.stringify(Student.all));
+    $("body").append($("<a />", {
+        href: url,
+        text: "Download",
+        download: "students.json"
+    }));
 }
 
-// Cohort.fullSort = function(){
-//     //sorts all student in each cohort
-//     for(let cohort of Cohort.all){
-//         cohort.sortStudents();
-//     }
-// }
+Cohort.find_by_name = function (name) {
+    return Cohort.all.find(x => x.name == name);
+}
 
-Cohort.fullScore = function(){
-    for(let cohort of Cohort.all){
-        cohort.scoreStudents();
+Cohort.fullScore = function () {
+    let delay = 0;
+    let length = Student.all.length;
+    for (let cohort of Cohort.all) {
+        setTimeout(function(){
+            cohort.scoreStudents();
+        },delay);
+        delay += secDelay*1000*length;
     }
 }
 
 
-class Student extends _base{
+class Student extends _base {
 
-    constructor(params){
+    constructor(params) {
         super(params);
         this.scores = [];
+        this.distances = [];
     }
-    get techScore(){
-        if (this._ts!==undefined){
+    get techScore() {
+        if (this._ts !== undefined) {
             return this._ts;
-        }else{
+        } else {
             //specifically finds anything with a "q" followed by a number
             let re = new RegExp('q[0-9]+');
-            return this._ts = Object.getOwnPropertyNames(this).filter(x=>x.match(re)).reduce((sum,val)=>sum+Number(this[val]), 0);
+            return this._ts = Object.getOwnPropertyNames(this).filter(x => x.match(re)).reduce((sum, val) => sum + Number(this[val]), 0);
         }
     }
-    
+
     //needed in order to reassign getter
-    set techScore(param){
+    set techScore(param) {
         delete this.techScore;
     }
 
-    get stats(){
-        if (this._s!==undefined){
+    get stats() {
+        if (this._s !== undefined) {
             return this._s;
-        }else{
+        } else {
             //traverses question links to get final stats (shouldn't change)
             //questions taken in order (starts with s + ##)
             // let re = new RegExp("s[0-9]+");
@@ -257,21 +288,21 @@ class Student extends _base{
             let q = Question.first();
             let i = 1;
             // for (let i = 1; i<total; i++){
-            while(q){
+            while (q) {
                 let result = q.outcome(this[`s${i}`]);
-                if (!this._s){
+                if (!this._s) {
                     this._s = {};
                 }
-                
-                for(let w of Object.keys(result)){
+
+                for (let w of Object.keys(result)) {
                     let k = result[w];
-                    if(!this._s[w]){
+                    if (!this._s[w]) {
                         this._s[w] = 0;
                     }
                     this._s[w] += k;
                 }
-                
-                q = Question.next(q,this[`s${i}`]);
+
+                q = Question.next(q, this[`s${i}`]);
                 i++;
             }
             return this._s;
@@ -280,20 +311,27 @@ class Student extends _base{
     }
 
     //needed in order to reassign getter
-    set stats(params){
+    set stats(params) {
     }
 
     //sorts list of cohorts by lowest priority
-    selfSort(){
-        this.scores = this.scores.sort( (a,b) =>a.score-b.score);
+    selfSort() {
+        this.scores = this.scores.sort((a, b) => a.score - b.score);
     }
 }
 
-Student.fullSort = function(){
-    Student.all.forEach(x=>x.selfSort());
+Student.fullSort = function () {
+    Student.all.forEach(x => x.selfSort());
 }
 
-class Sort{
+Student.createFromJSON = function (json_obj) {
+    // let self = this;
+    for (let i of json_obj) {
+        new this(i);
+    }
+}
+
+class Sort {
     //in charge of sorting students appropriatetly
 
     // will take prorities into account
@@ -303,16 +341,16 @@ class Sort{
     // score on location (logged?) pulled from Google Maps API
     // average school_type +/- 3 students
 
-    constructor(){
-        Cohort.fullScore();
+    constructor() {
+        // Cohort.fullScore(); //includes location
         Student.fullSort();
         this.cohorts = Cohort.all;
         this.students = Student.all;
         this.priorities = data.priorities;
-        this.priorityList = this.students.sort((a,b)=>a.score-b.score);
+        this.priorityList = this.students.sort((a, b) => a.score - b.score);
     }
 
-    call(){
+    call() {
         //does sorting algorithm;
         this.fillRosters();
 
@@ -321,9 +359,9 @@ class Sort{
     }
 
 
-    fillRosters(){
-    	//fills cohorts based on threshold restricitons and student priorities
-    	// for any remaining cohorts, waitlists are assessed and filled by student priorities only
+    fillRosters() {
+        //fills cohorts based on threshold restricitons and student priorities
+        // for any remaining cohorts, waitlists are assessed and filled by student priorities only
         // if(!(this.cohorts.reduce((sum,val)=>sum+Number(val.capacity),0)<this.students.length)){
         //     throw new Error(`Number of students (${this.students.length}) insufficient to fill cohorts${this.cohorts.reduce((sum,val)=>sum+Number(val.capacity),0)}`);
         // }
@@ -335,18 +373,18 @@ class Sort{
         // }
     }
 
-    fill_roster_by(num){
+    fill_roster_by(num) {
         //priority to first picks
         //first fill classes
-        this.students.forEach(student=>{
-            if (!student.cohort){
+        this.students.forEach(student => {
+            if (!student.cohort) {
                 let cohort = Cohort.find_by_name(student.scores[num].cohort);
                 cohort.add_student(student);
             }
         })
         //then wean out lowest scores
-        this.cohorts.forEach(cohort=>{
-            while(cohort.class.length>cohort.capacity){
+        this.cohorts.forEach(cohort => {
+            while (cohort.class.length > cohort.capacity) {
                 cohort.popLowest();
             }
         })
@@ -354,23 +392,23 @@ class Sort{
         // this.removeFromWaitlists();
     }
 
-	createWaitlist(){
+    createWaitlist() {
         //creates waitlist
-        this.waitlist = this.students.filter(s=>!s.cohort);
+        this.waitlist = this.students.filter(s => !s.cohort);
     }
 
-    unfilledCohorts(){
+    unfilledCohorts() {
         //returns array of unfilled Cohort objects
-        return this.cohorts.filter(x=>x.class.length<x.capacity);
+        return this.cohorts.filter(x => x.class.length < x.capacity);
     }
 
-    get waitlist(){
-        return this.students.filter(s=>!!s.cohort);
+    get waitlist() {
+        return this.students.filter(s => !!s.cohort);
     }
 }
 
 let cohorts, questions, students;
-[cohorts, questions, students] = [[],[],[]];
+[cohorts, questions, students] = [[], [], []];
 // DO I STILL NEED THIS?
 
 let files = [];
@@ -379,15 +417,15 @@ files.push("priorities");
 
 let data = {};
 
-function setup(){
+function setup() {
     noCanvas();
     //loading cohorts, priorities, and students
-    for(let file of files){
+    for (let file of files) {
         $.get({
-            url:file+".csv",
+            url: file + ".csv",
             async: false,
-            dataType:'text',
-            success:x=>data[file]=x
+            dataType: 'text',
+            success: x => data[file] = x
         });
     }
 
@@ -396,42 +434,42 @@ function setup(){
 
     //loading questions as JSON
     $.get({
-        url:"questions.json",
+        url: "questions.json",
         async: false,
-        dataType:'json',
-        success:x=>data["questions"]=x
+        dataType: 'json',
+        success: x => data["questions"] = x
     });
-   
+
     //loading students as JSON (from previous load)
-    if(!files.includes("students")){
+    if (useStudentJSON) {
         // console.log("Make sure to run this from node.js first!");
         $.get({
-            url:"students.json",
+            url: "students.json",
             async: false,
-            dataType:'json',
-            success:x=>Student.createFromJSON(x)
+            dataType: 'json',
+            success: x => Student.createFromJSON(x)
         });
-    }else{
+    } else {
         $.get({
-            url:"students.csv",
+            url: "students.csv",
             async: false,
-            dataType:'text',
-            success:x=>Student.createFromCSVString(x)
+            dataType: 'text',
+            success: x => {
+                Student.createFromCSVString(x)
+            }
         });
     }
-        
-   //eventually want this to pull from Google Spreadsheet
-   //No go - spreadsheet would need to be public
-   
 
-//    If any student is missing distance
-    // if(Student.any(x=>!x.distance)){
-    //     // add distances and save new csv
-    //     // Student.add_distances();
-    //     saveCSV(Student.all);
-    //     throw new Error("Make sure to include distances! Run the 'set_locations.js' script in node.js");
-    // }
     Cohort.createFromCSVString(data["cohorts"]);
     Question.createFromJSON(data["questions"]);
 }
+
+var makeTextFile = function (text) {
+    var data = new Blob([text], { type: 'text/plain' });
+
+    textFile = window.URL.createObjectURL(data);
+
+    // returns a URL you can use as a href
+    return textFile;
+};
 
