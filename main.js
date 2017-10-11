@@ -127,6 +127,28 @@ Question.createFromJSON = function (obj) {
     }
 }
 
+class Timer {
+    // in charge of keeping count and percent done
+    constructor(total_count,cohort_name){
+        this.total_count=total_count;
+        this.current = 0;
+        console.log(`Starting ${cohort_name}`);
+    }
+
+    update(){
+        this.current++;
+        if(this.done_check()){
+            console.log("Done!");
+            addStudentDownload();
+        }else{
+            console.log(Math.round((this.current/this.total_count)*100,2)+"% done...");
+        }
+    }
+
+    done_check(){
+        return this.current==this.total_count;
+    }
+}
 
 class Cohort extends _base {
     constructor(params) {
@@ -164,44 +186,46 @@ class Cohort extends _base {
         // return score;
     }
 
-    distStudent(student, delay) {
+    distStudent(student, delay, timer) {
         //makes api request for distance
-        // if(Student.all.all(x=>!!x.distance))
-        setTimeout(function(){
-            let origin = student.address;
+        let name = this.name;
+        setTimeout(()=>{
+            let address = student.address;
             let dest = this.location;
             var request = {
-                origin: origin.replace(" ", "+"),
+                origin: address.replace(" ", "+"),
                 destination: dest.replace(" ", "+"),
                 travelMode: google.maps.DirectionsTravelMode.DRIVING
             };
-            console.log(student);
-            // directionsService.route(request, function (response, status) {
-            //     let num;
-            //     if (status == google.maps.DirectionsStatus.OK) {
-            //        num = response.routes[0].legs[0].distance.value // the distance in metres
-            //     } else {
-            //         num = Infinity;
-            //         console.log("Error: " + status);
-            //     }
-            //     student.distances.push({
-            //         "cohort": this.name,
-            //         "distance": num // the distance in metres
-            //     });
-            // });
-            if(Student.all.all(x=>!!x.distances[this.name])){
-                addStudentDownload();
-            }
+
+            directionsService.route(request, function (response, status) {
+                let num;
+                if (status == google.maps.DirectionsStatus.OK) {
+                   num = response.routes[0].legs[0].distance.value // the distance in metres
+                } else {
+                    num = Infinity;
+                    console.log("Error: " + status);
+                }
+                student.distances.push({
+                    "cohort": name,
+                    "distance": num // the distance in metres
+                });
+                // $("body").append(JSON.stringify(student));
+                timer.update();
+            });
         }, delay);
     }
 
     scoreStudents() {
         //trying not to flood the api!
-        let timer = 0; //millisecond delay
+        let delay = 0; //millisecond delay
+        let timer = new Timer(Student.all.length, this.name);
         for (let student of Student.all) {
             this.scoreStudent(student);
-            this.distStudent(student, timer);
-            timer += secDelay*1000;
+            if(!useStudentJSON){
+                this.distStudent(student, delay, timer);
+                delay += secDelay*1000;
+            }
         }
     }
 
@@ -246,11 +270,19 @@ Cohort.find_by_name = function (name) {
 Cohort.fullScore = function () {
     let delay = 0;
     let length = Student.all.length;
+    if(!useStudentJSON){
+        console.log("Estimated total time "+ Math.round(secDelay*Student.all.length*Cohort.all.length/60, 2) + " minute(s)");
+    }
+
     for (let cohort of Cohort.all) {
-        setTimeout(function(){
+        if(!useStudentJSON){
+            setTimeout(function(){
+                cohort.scoreStudents();
+            },delay);
+            delay += secDelay*1000*length;
+        }else{
             cohort.scoreStudents();
-        },delay);
-        delay += secDelay*1000*length;
+        }
     }
 }
 
@@ -342,12 +374,12 @@ class Sort {
     // average school_type +/- 3 students
 
     constructor() {
-        // Cohort.fullScore(); //includes location
+        Cohort.fullScore(); //includes location
         Student.fullSort();
         this.cohorts = Cohort.all;
         this.students = Student.all;
         this.priorities = data.priorities;
-        this.priorityList = this.students.sort((a, b) => a.score - b.score);
+        // this.priorityList = this.students.sort((a, b) => a.score - b.score);
     }
 
     call() {
