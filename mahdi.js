@@ -14,6 +14,48 @@ var myRandom = function(min, max){
 	}
 }
 
+//accepts random object input with decimal percentages(or counts) of probabilities as values
+function randProb(obj){
+  // {
+  //   "first": 0.5,
+  //   "second": 0.25,
+  //   "third": 0.25
+  // }
+
+  // {
+  //   "first": 10,
+  //   "second": 5,
+  //   "third": 5
+  // }
+  let temp = [];
+  //Getting total to determine if probabilities or counts
+  let keys = Object.keys(obj);
+  for(let key of keys){
+    if(typeof obj[key] != "number"){
+      throw new TypeError(`Object value was not a number: ${obj[key]}`);
+    }
+    temp.push(obj[key]);
+  }
+
+  let sum = temp.sum();
+
+  if(sum < 1){
+      throw new RangeError(`Values totalled ${sum}, instead of 1 or more`);
+  }else if(sum!=1){
+    temp = temp.map(x=>x/temp.sum()); //will set counts to be proper probability
+  }
+
+  let pick = Math.random();
+  let running_total = 0;
+  for(let i = 0; i < keys.length; i++){
+    running_total += temp[i];
+    if(pick<= running_total){
+      return keys[i];
+    }
+  }
+  throw new Error("Something went wrong!");
+}
+
 var capFirst = function(string, flag = false, split = " "){
 	//with 1 string argument, returns a string with first letter capitalized
 	//with flag = true, will return string of all first letters after string splitting using split

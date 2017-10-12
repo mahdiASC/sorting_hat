@@ -43,19 +43,19 @@ let locations = [
     "340 W 85th St New York, NY 10024-6265"
 ];
 
-let ethnicities = [
-    'African American',
-    'African',
-    'Caribbean',
-    'West Indian',
-    'Hispanic/Latino',
-    'White',
-    'Native American',
-    'Middle Eastern',
-    'East Asian',
-    'South Asian',
-    'Southeast Asian'
-];
+let ethnicities = {
+    'African American': 60,
+    'African': 5,
+    'Caribbean': 5,
+    'West Indian': 3,
+    'Hispanic/Latino': 15,
+    'White': 1,
+    'Native American': 1,
+    'Middle Eastern': 1,
+    'East Asian':3,
+    'South Asian': 4,
+    'Southeast Asian': 5
+};
 
 function newStudent(){
     p = [];
@@ -66,7 +66,7 @@ function newStudent(){
     p.push(randName(2));
     p.push(randName()+"@gmail.com");
     p.push(randPhone());
-    p.push(myRandom(ethnicities));
+    p.push(randProb(ethnicities));
     p.push(Math.random()>.5 ? 11 : 10);
     p.push(myRandom(["CTE","public","private","charter"]));
     p.push(Math.random()>.5 ? "yes" : "no");
