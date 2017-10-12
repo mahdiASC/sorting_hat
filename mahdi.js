@@ -14,6 +14,11 @@ var myRandom = function(min, max){
 	}
 }
 
+//returns random element from array
+Array.prototype.random = function(){
+  return myRandom(this);
+}
+
 //accepts random object input with decimal percentages(or counts) of probabilities as values
 function randProb(obj){
   // {
@@ -179,10 +184,17 @@ var sumArray = function(array){
     return sum + value;
   }, 0);
 }
+Array.prototype.sum = function(){
+  return sumArray(this);
+}
 
 var avgArray = function(array){
   // returns average of array of numbers
   return sumArray(array)/array.length;
+}
+
+Array.prototype.avg = function(){
+  return avgArray(this);
 }
 
 var stdDevArray = function(array){
@@ -191,8 +203,15 @@ var stdDevArray = function(array){
   var sqDiffs = array.map(function(value){
     return Math.pow(value - avg,2);
   });
-  var avgSq = avgArray(sqDiffs);
-  return Math.sqrt(avgSq);
+  var variance = avgArray(sqDiffs);
+  return Math.sqrt(variance);
+}
+
+let z_score = function(x,mean, stdv){
+  //x represents the value being assessed
+  //mean is mean of the population
+  //stdv is standard deviation from the mean
+  return (x-mean)/stdv; //returns a number (+/-) representing how many standard deviations the value is from the mean
 }
 
 var normRand = function(mean, std){

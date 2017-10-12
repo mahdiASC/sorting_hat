@@ -67,6 +67,7 @@ function newStudent(){
     p.push(randName()+"@gmail.com");
     p.push(randPhone());
     p.push(randProb(ethnicities));
+    p.push(myRandom(65,100));
     p.push(Math.random()>.5 ? 11 : 10);
     p.push(myRandom(["CTE","public","private","charter"]));
     p.push(Math.random()>.5 ? "yes" : "no");

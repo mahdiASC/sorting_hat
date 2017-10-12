@@ -397,14 +397,17 @@ class Statistics{
         
         if(Array.isArray(obj)){
             //Assumed array of student object
+            //Prop. of race
+            output["ethnicity"] = {
+                "avg":this.unique_array_counts(obj.map(x=>x.race)), //average
+            }
+
+            //Prop. of gpa & stdDev
+            //Prop. of CS experience
             
-            //Prop. of race & stdDev
-            output["race"] = this.unique_array_counts(obj.map(x=>x.race));
-            //Prop. of CS experience & stdDev
+            //Prop. of grades
             
-            //Prop. of grades & stdDev
-            
-            //Prop. of school_type & stdDev    
+            //Prop. of school_type
         }else if(obj instanceof Cohort){
             //assumed cohort object
 
