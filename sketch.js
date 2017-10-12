@@ -41,7 +41,22 @@ let locations = [
     "817 Kuhlman Rd Houston, TX 77024-3105",
     "33504 Shorewood Dr Avon, MN 56310-8506",
     "340 W 85th St New York, NY 10024-6265"
-]
+];
+
+let ethnicities = [
+    'African American',
+    'African',
+    'Caribbean',
+    'West Indian',
+    'Hispanic/Latino',
+    'White',
+    'Native American',
+    'Middle Eastern',
+    'East Asian',
+    'South Asian',
+    'Southeast Asian'
+];
+
 function newStudent(){
     p = [];
     p.push(randName(2));
@@ -51,6 +66,7 @@ function newStudent(){
     p.push(randName(2));
     p.push(randName()+"@gmail.com");
     p.push(randPhone());
+    p.push(myRandom(ethnicities));
     p.push(Math.random()>.5 ? 11 : 10);
     p.push(myRandom(["CTE","public","private","charter"]));
     p.push(Math.random()>.5 ? "yes" : "no");
@@ -86,9 +102,4 @@ function setup(){
     for (let i = 0; i < 30 ; i ++){
         createP(newStudent());
     }
-}
-
-
-function draw(){
-
 }

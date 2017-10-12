@@ -399,7 +399,7 @@ class Statistics{
             //Assumed array of student object
             
             //Prop. of race & stdDev
-            output["race"] = ;                
+            output["race"] = this.unique_array_counts(obj.map(x=>x.race));
             //Prop. of CS experience & stdDev
             
             //Prop. of grades & stdDev
@@ -409,7 +409,7 @@ class Statistics{
             //assumed cohort object
 
             //Prop. of race & stdDev
-            output["race"] = ;            
+            // output["race"] = ;
             //Prop. of CS experience & stdDev
             
             //Prop. of grades & stdDev
@@ -423,7 +423,9 @@ class Statistics{
     
     unique_array_counts(arr){
         //returns object of counts for array of strings
-        
+        let output = {};
+        arr.forEach(x=>output[x] = !!output[x] ? output[x]+1 : 1);
+        return output;
     }
 
     visualize_stats(){
