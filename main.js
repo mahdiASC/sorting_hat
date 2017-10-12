@@ -1,6 +1,6 @@
 // NOTE: csv need "+" as delimiter
 //if 'student.json' exists, should use to reduce API calls
-let useStudentJSON = false;
+let useStudentJSON = true;
 let api_key = 'AIzaSyDlA_pTF7IbYhUehFHwmZZZW9Cs9GbVGS8';
 let directionsService = new google.maps.DirectionsService();
 let secDelay = 1;//delay in seconds for api call
@@ -218,8 +218,10 @@ class Cohort extends _base {
 
     scoreStudents() {
         //trying not to flood the api!
-        let delay = 0; //millisecond delay
-        let timer = new Timer(Student.all.length, this.name);
+        if(!useStudentJSON){
+            let delay = 0; //millisecond delay
+            let timer = new Timer(Student.all.length, this.name);
+        }
         for (let student of Student.all) {
             this.scoreStudent(student);
             if(!useStudentJSON){
@@ -245,7 +247,8 @@ class Cohort extends _base {
     }
 
     remove_student(student){
-        console.log("NEEDS TO BE CODED");
+        delete student.cohort;
+        return this.class.splice(this.class.findIndex(x=>x==student),1);
     }
 
     fullcheck() {
@@ -268,20 +271,18 @@ Cohort.find_by_name = function (name) {
 }
 
 Cohort.fullScore = function () {
-    let delay = 0;
     let length = Student.all.length;
     if(!useStudentJSON){
         console.log("Estimated total time "+ Math.round(secDelay*Student.all.length*Cohort.all.length/60, 2) + " minute(s)");
     }
-
-    for (let cohort of Cohort.all) {
-        if(!useStudentJSON){
+    
+    let delay = 0;
+    if(!useStudentJSON){  //JSON Saved students already scored
+        for (let cohort of Cohort.all) {
             setTimeout(function(){
                 cohort.scoreStudents();
             },delay);
             delay += secDelay*1000*length;
-        }else{
-            cohort.scoreStudents();
         }
     }
 }
@@ -291,8 +292,8 @@ class Student extends _base {
 
     constructor(params) {
         super(params);
-        this.scores = [];
-        this.distances = [];
+        this.scores = this.scores || [];
+        this.distances = this.distances || [];
     }
     get techScore() {
         if (this._ts !== undefined) {
@@ -387,16 +388,18 @@ class Sort {
         this.fillRosters();
 
         //creates waitlist
-        this.createWaitlist();
+        // this.createWaitlist();
     }
 
 
     fillRosters() {
         //fills cohorts based on threshold restricitons and student priorities
         // for any remaining cohorts, waitlists are assessed and filled by student priorities only
-        // if(!(this.cohorts.reduce((sum,val)=>sum+Number(val.capacity),0)<this.students.length)){
-        //     throw new Error(`Number of students (${this.students.length}) insufficient to fill cohorts${this.cohorts.reduce((sum,val)=>sum+Number(val.capacity),0)}`);
-        // }
+
+        // if not enough student, returns error
+        if(!(this.cohorts.reduce((sum,val)=>sum+Number(val.capacity),0)<this.students.length)){
+            throw new Error(`Number of students (${this.students.length}) insufficient to fill cohorts${this.cohorts.reduce((sum,val)=>sum+Number(val.capacity),0)}`);
+        }
 
         // let priority = 0; //start with first choice and keeps decreasing until cohorts filled.
         // while(this.unfilledCohorts().length>0){
