@@ -5,6 +5,8 @@ let api_key = 'AIzaSyDlA_pTF7IbYhUehFHwmZZZW9Cs9GbVGS8';
 let directionsService = new google.maps.DirectionsService();
 let secDelay = 1;//delay in seconds for api call
 
+//REQUIRES 'mahdi.js'
+
 //To do for full game
 // Setup static website
 // using p5.js and p5.dom.js
@@ -364,6 +366,73 @@ Student.createFromJSON = function (json_obj) {
     }
 }
 
+class Statistics{
+    //responsible for handling the stats for cohorts
+    constructor(){
+        this.cohorts = Cohort.all;
+        this.students = Student.all;
+        this.stats = {}; //will contain stats for all students
+        this.cohort_stats = {}; //will contain all cohort specific stats by cohort name
+    }
+
+    call(){
+        all_stats(); //must establish first
+        cohort_stats();
+    }
+    
+    all_stats(){
+        //calculates metadata on all students
+        this.stats = calc_stats(this.students);   
+    }
+    
+    cohort_stats(){
+        for(let cohort of this.cohorts){
+            this.cohort_stats[cohort.name]=this.calc_stats(cohort);
+        }
+    }
+
+    calc_stats(obj){
+        //returns JSON of stats for given cohort object or Array of students
+        let output = {};
+        
+        if(Array.isArray(obj)){
+            //Assumed array of student object
+            
+            //Prop. of race & stdDev
+            output["race"] = ;                
+            //Prop. of CS experience & stdDev
+            
+            //Prop. of grades & stdDev
+            
+            //Prop. of school_type & stdDev    
+        }else if(obj instanceof Cohort){
+            //assumed cohort object
+
+            //Prop. of race & stdDev
+            output["race"] = ;            
+            //Prop. of CS experience & stdDev
+            
+            //Prop. of grades & stdDev
+            
+            //Prop. of school_type & stdDev
+        }else{
+            throw new Error(`Something went wrong! Input was not an Array or Cohort object, but was: ${obj.constructor.name}`);
+        }
+        return output;
+    }
+    
+    unique_array_counts(arr){
+        //returns object of counts for array of strings
+        
+    }
+
+    visualize_stats(){
+    //adds demographic breakdown of cohorts with average, and deviation from mean visually to html doc
+    // http://www.chartjs.org/samples/latest/
+    }
+
+}
+
 class Sort {
     //in charge of sorting students appropriatetly
 
@@ -377,10 +446,9 @@ class Sort {
     constructor() {
         Cohort.fullScore(); //includes location
         Student.fullSort();
-        this.cohorts = Cohort.all;
-        this.students = Student.all;
-        this.priorities = data.priorities;
-        // this.priorityList = this.students.sort((a, b) => a.score - b.score);
+        this.cohorts = Cohort.all.copy(); //NEEDED?
+        this.students = Student.all.copy();
+        // this.priorities = data.priorities; //NEEDED?
     }
 
     call() {
@@ -406,6 +474,12 @@ class Sort {
         //     this.fill_roster_by(priority);
         //     priority ++;
         // }
+
+
+        // PLAN
+        // 1) ADD PRIORITY STUDENTS UNTIL BLACK/LATINO quota filled
+        // 2) If quota filled, try distance (log(distance)?)
+        // 2) If 
     }
 
     fill_roster_by(num) {
@@ -442,61 +516,18 @@ class Sort {
     }
 }
 
-let cohorts, questions, students;
-[cohorts, questions, students] = [[], [], []];
-// DO I STILL NEED THIS?
-
-let files = [];
-files.push("cohorts");
-files.push("priorities");
-
-let data = {};
-
 function setup() {
     noCanvas();
-    //loading cohorts, priorities, and students
-    for (let file of files) {
-        $.get({
-            url: file + ".csv",
-            async: false,
-            dataType: 'text',
-            success: x => data[file] = x
-        });
-    }
 
-    // not elegant solution
-    files.push("students");
-
-    //loading questions as JSON
-    $.get({
-        url: "questions.json",
-        async: false,
-        dataType: 'json',
-        success: x => data["questions"] = x
-    });
-
+    //loading data into files
+    store_file("cohorts.csv",x => Cohort.createFromCSVString(x));
+    store_file("questions.json",x => Question.createFromJSON(x));
     //loading students as JSON (from previous load)
     if (useStudentJSON) {
-        // console.log("Make sure to run this from node.js first!");
-        $.get({
-            url: "students.json",
-            async: false,
-            dataType: 'json',
-            success: x => Student.createFromJSON(x)
-        });
+        store_file("students.json",x => Student.createFromJSON(x));
     } else {
-        $.get({
-            url: "students.csv",
-            async: false,
-            dataType: 'text',
-            success: x => {
-                Student.createFromCSVString(x)
-            }
-        });
+        store_file("students.csv",x => Student.createFromCSVString(x));
     }
-
-    Cohort.createFromCSVString(data["cohorts"]);
-    Question.createFromJSON(data["questions"]);
 }
 
 var makeTextFile = function (text) {
@@ -508,3 +539,14 @@ var makeTextFile = function (text) {
     return textFile;
 };
 
+var store_file = function(file, func){
+    //helper method for making ajax request on local files
+    let re = new RegExp(".csv");
+    let _type = re.exec(file) ? "text" : "json";
+    $.get({
+        url: file,
+        async: false,
+        dataType: _type,
+        success: func
+    });
+}

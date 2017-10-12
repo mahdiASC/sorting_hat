@@ -143,7 +143,7 @@ var avgArray = function(array){
   return sumArray(array)/array.length;
 }
 
-var stdDev = function(array){
+var stdDevArray = function(array){
   // returns the std dev of an array of numbers
   var avg = avgArray(array);
   var sqDiffs = array.map(function(value){
@@ -189,16 +189,17 @@ function removeArrayItem(arr, item) {
 };
 
 
+//JUST USE .include()
 // Does a given array contain a item
-function contains(a, obj) {
-    var i = a.length;
-    while (i--) {
-        if (a[i] === obj) {
-            return true;
-        }
-    }
-    return false;
-};
+// function contains(a, obj) {
+//     var i = a.length;
+//     while (i--) {
+//         if (a[i] === obj) {
+//             return true;
+//         }
+//     }
+//     return false;
+// };
 
 
 
@@ -226,3 +227,8 @@ Object.defineProperty(Array.prototype,"last",{get: function(){
 Object.defineProperty(Array.prototype,"first",{get: function(){
   return this[0];
 }});
+
+//return copy of array into a new array with same index and pointers to items
+Array.prototype.copy = function() {
+    return  this.map(x=>x);
+};
