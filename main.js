@@ -1,12 +1,22 @@
+
 // NOTE: csv need "+" as delimiter
 //if 'student.json' exists, should use to reduce API calls
 let useStudentJSON = true;
 let api_key = 'AIzaSyDlA_pTF7IbYhUehFHwmZZZW9Cs9GbVGS8';
 let directionsService = new google.maps.DirectionsService();
 let secDelay = 1;//delay in seconds for api call
-
 //REQUIRES 'mahdi.js'
 
+let graph_colors = [
+    "rgba(80,193,233,0.75)",
+    "rgba(162,133,220,0.75)",
+    "rgba(157,208,82,0.75)",
+    "rgba(235,171,36,0.75)",
+    "rgba(234,93,79,0.75)",
+    "rgba(60,62,66,0.75)",
+    "rgba(235,55,55,0.75)",
+    "rgba(200,222,235,0.75)"
+]
 //To do for full game
 // Setup static website
 // using p5.js and p5.dom.js
@@ -18,6 +28,7 @@ let secDelay = 1;//delay in seconds for api call
 // create algorithm for sorting students
 // --competition and prioritization
 // take into account waitlist?
+// include image of student and cohorts in data
 
 
 // The sorting hat questions and application questions are intermingled
@@ -259,6 +270,7 @@ class Cohort extends _base {
         // returns true if class full
         return this.class >= this.capacity;
     }
+
 }
 
 addStudentDownload = function(){
@@ -373,71 +385,56 @@ class Statistic{
     constructor(){
         this.cohorts = Cohort.all;
         this.students = Student.all;
-        this.stats = {}; //will contain stats for all students
-        this.cohort_stats = {}; //will contain all cohort specific stats by cohort name
-    }
-
-    call(){
-        this.all_stats(); //must establish first
-        // this.cohort_stats();
+        this.s_stats = {}; //will contain stats for all students
+        this.c_stats = {}; //will contain all cohort specific stats by cohort name
+        this.student_stats(); //must establish first
     }
     
-    all_stats(){
+    student_stats(){
         //calculates metadata on all students
-        this.stats = this.calc_stats(this.students);   
+        this.s_stats = this.calc_stats(this.students);   
     }
     
-    // cohort_stats(){
-    //     for(let cohort of this.cohorts){
-    //         this.cohort_stats[cohort.name]=this.calc_stats(cohort);
-    //     }
-    // }
+    cohort_stats(){
+        for(let cohort of this.cohorts){
+            this.c_stats[cohort.name]=this.calc_stats(cohort);
+        }
+        return this.c_stats;
+    }
 
     calc_stats(obj){
         //returns JSON of stats for given cohort object or Array of students
-        let output = {};
-        if(Array.isArray(obj)){
-            //Assumed array of student object
-            //Prop. of race
-            output["ethnicity"] = {
-                "avg":this.unique_array_prop(obj.map(x=>x.ethnicity)) //average
-            }
-
-            //Prop. of gpa & stdDev
-            let gpa_avg = avgArray(obj.map(x=>Number(x.gpa)));
-            let gpa_sd = stdDevArray(obj.map(x=>Number(x.gpa)));
-            output["gpa"] = {
-                "avg" : gpa_avg,
-                "sd" : gpa_sd
-            }
-            //Prop. of CS experience
-            output["cs_exp"] = {
-                "avg":this.unique_array_prop(obj.map(x=>x.prev_cs))
-            }
-            //Prop. of grades
-            output["grade"] = {
-                "avg":this.unique_array_prop(obj.map(x=>x.grade))
-            }
-            //Prop. of school_type
-            output["school_type"] = {
-                "avg":this.unique_array_prop(obj.map(x=>x.school_type))
-            }
-        }else if(obj instanceof Cohort){
-            //assumed cohort object
-
-            //Prop. of race & stdDev
-            // output["race"] = ;
-            //gpa
-            // z_score = function(x,mean, stdv)
-            //calc_percentile = function(z_val)
-
-            //Prop. of CS experience & stdDev
-            
-            //Prop. of grades & stdDev
-            
-            //Prop. of school_type & stdDev
-        }else{
+        let output = {};    
+        let focus = obj;//Assumed array of student object
+        if(!obj instanceof Cohort && Array.isArray(obj)){
             throw new Error(`Something went wrong! Input was not an Array or Cohort object, but was: ${obj.constructor.name}`);
+
+        }else if (obj instanceof Cohort){
+            focus = obj.class;
+        }
+        //Prop. of race
+        output["ethnicity"] = {
+            "avg":this.unique_array_prop(focus.map(x=>x.ethnicity)) //average
+        }
+
+        //Prop. of gpa & stdDev
+        let gpa_avg = avgArray(focus.map(x=>Number(x.gpa)));
+        let gpa_sd = stdDevArray(focus.map(x=>Number(x.gpa)));
+        output["gpa"] = {
+            "avg" : gpa_avg,
+            "sd" : gpa_sd
+        }
+        //Prop. of CS experience
+        output["prev_cs"] = {
+            "avg":this.unique_array_prop(focus.map(x=>x.prev_cs))
+        }
+        //Prop. of grades
+        output["grade"] = {
+            "avg":this.unique_array_prop(focus.map(x=>x.grade))
+        }
+        //Prop. of school_type
+        output["school_type"] = {
+            "avg":this.unique_array_prop(focus.map(x=>x.school_type))
         }
         return output;
     }
@@ -466,9 +463,84 @@ class Statistic{
     visualize_stats(){
     //adds demographic breakdown of cohorts with average, and deviation from mean visually to html doc
     // http://www.chartjs.org/samples/latest/
-    }
+        this.cohort_stats();
+        for(let name of Object.keys(this.c_stats)){
+            $("body").append(`<h1>Cohort: ${name}</h1>`);
+            let c_stat = this.c_stats[name];
+            let stats = [
+                "ethnicity",
+                "school_type",
+                "grade",
+                "prev_cs"
+            ];
 
+            for( let stat of stats){
+                $("body").append(`<div class="chart-container" style="position: relative; height:30vh; width:30vw"><canvas id="${name}_${stat}" width:300px height:300px></canvas></div>`);
+                makeGraph(`${name}_${stat}`, c_stat[stat].avg);
+                // if(stat=="gpa"){
+                //     makeBarGraph(`${name}_${stat}`, Cohort.find_by_name(name).class.map(x=>Number(x.gpa)));
+                // }else{}
+            }
+
+            //listing students
+            let add_string=`<ol id=${name}_students>`;
+            let c_class = Cohort.find_by_name(name).class;
+            for(let student of c_class){
+                add_string +=`<li>${student.name}</li>`;
+            }
+            add_string +=`</ol>`;
+            $("body").append(add_string);
+
+        }
+    }
 }
+
+let makeGraph = function(name, myData){
+    let full_labels = Object.keys(myData).sort((a,b)=>myData[b]-myData[a]);
+    let full_values = full_labels.map(x=>myData[x]).map(x=>(x*100).toFixed(2));
+    let data = {
+        datasets: [{
+            data: full_values,
+            backgroundColor: graph_colors
+        }],
+        labels: full_labels
+    };
+
+    new Chart(name, {
+        type: 'pie',
+        data: data,
+        options: {
+            responsive: true,
+            legend:{
+                display: false
+            }
+        }
+    });
+}
+
+// let makeBarGraph = function(name, myData){
+//     console.log(myData);
+//     let full_labels = Object.keys(myData).sort((a,b)=>myData[b]-myData[a]);
+//     let full_values = full_labels.map(x=>myData[x]).map(x=>(x*100).toFixed(2));
+//     let data = {
+//         datasets: [{
+//             data: full_values,
+//             backgroundColor: graph_colors
+//         }],
+//         labels: full_labels
+//     };
+    
+//     new Chart(name, {
+//         type: 'bar',
+//         data: data,
+//         options: {
+//             responsive: true,
+//             // legend:{
+//             //     display: false
+//             // }
+//         }
+//     });
+// }
 
 class Sort {
     //in charge of sorting students appropriatetly
@@ -483,9 +555,10 @@ class Sort {
     constructor() {
         Cohort.fullScore(); //includes location
         Student.fullSort();
-        this.cohorts = Cohort.all.map(x=>x); //NEEDED?
+        this.cohorts = Cohort.all.map(x=>x); //making copy
         this.students = Student.all.map(x=>x);
         // this.priorities = data.priorities; //NEEDED?
+        this.call();
     }
 
     call() {
@@ -553,19 +626,7 @@ class Sort {
     }
 }
 
-function setup() {
-    noCanvas();
 
-    //loading data into files
-    store_file("cohorts.csv",x => Cohort.createFromCSVString(x));
-    store_file("questions.json",x => Question.createFromJSON(x));
-    //loading students as JSON (from previous load)
-    if (useStudentJSON) {
-        store_file("students.json",x => Student.createFromJSON(x));
-    } else {
-        store_file("students.csv",x => Student.createFromCSVString(x));
-    }
-}
 
 var makeTextFile = function (text) {
     var data = new Blob([text], { type: 'text/plain' });
@@ -586,4 +647,24 @@ var store_file = function(file, func){
         dataType: _type,
         success: func
     });
+}
+
+let x;
+function setup() {
+    noCanvas();
+
+    //loading data into files
+    store_file("cohorts.csv",x => Cohort.createFromCSVString(x));
+    store_file("questions.json",x => Question.createFromJSON(x));
+    //loading students as JSON (from previous load)
+    if (useStudentJSON) {
+        store_file("students.json",x => Student.createFromJSON(x));
+    } else {
+        store_file("students.csv",x => Student.createFromCSVString(x));
+    }
+
+    //FOR TESTING
+    x=new Statistic();
+    Cohort.all[0].class=Student.all;
+
 }
