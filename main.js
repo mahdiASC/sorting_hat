@@ -195,8 +195,8 @@ class Cohort extends _base {
             let address = student.address;
             let dest = this.location;
             var request = {
-                origin: address.replace(" ", "+"),
-                destination: dest.replace(" ", "+"),
+                origin: address.replace(/ /g, "+"),
+                destination: dest.replace(/ /g, "+"),
                 travelMode: google.maps.DirectionsTravelMode.DRIVING
             };
 
@@ -223,12 +223,14 @@ class Cohort extends _base {
         if(!useStudentJSON){
             let delay = 0; //millisecond delay
             let timer = new Timer(Student.all.length, this.name);
-        }
-        for (let student of Student.all) {
-            this.scoreStudent(student);
-            if(!useStudentJSON){
+            for (let student of Student.all) {
+                this.scoreStudent(student);
                 this.distStudent(student, delay, timer);
                 delay += secDelay*1000;
+            }
+        }else{
+            for (let student of Student.all) {
+                this.scoreStudent(student);
             }
         }
     }
@@ -366,7 +368,7 @@ Student.createFromJSON = function (json_obj) {
     }
 }
 
-class Statistics{
+class Statistic{
     //responsible for handling the stats for cohorts
     constructor(){
         this.cohorts = Cohort.all;
@@ -376,43 +378,59 @@ class Statistics{
     }
 
     call(){
-        all_stats(); //must establish first
-        cohort_stats();
+        this.all_stats(); //must establish first
+        // this.cohort_stats();
     }
     
     all_stats(){
         //calculates metadata on all students
-        this.stats = calc_stats(this.students);   
+        this.stats = this.calc_stats(this.students);   
     }
     
-    cohort_stats(){
-        for(let cohort of this.cohorts){
-            this.cohort_stats[cohort.name]=this.calc_stats(cohort);
-        }
-    }
+    // cohort_stats(){
+    //     for(let cohort of this.cohorts){
+    //         this.cohort_stats[cohort.name]=this.calc_stats(cohort);
+    //     }
+    // }
 
     calc_stats(obj){
         //returns JSON of stats for given cohort object or Array of students
         let output = {};
-        
         if(Array.isArray(obj)){
             //Assumed array of student object
             //Prop. of race
             output["ethnicity"] = {
-                "avg":this.unique_array_counts(obj.map(x=>x.race)), //average
+                "avg":this.unique_array_prop(obj.map(x=>x.ethnicity)) //average
             }
 
             //Prop. of gpa & stdDev
+            let gpa_avg = avgArray(obj.map(x=>Number(x.gpa)));
+            let gpa_sd = stdDevArray(obj.map(x=>Number(x.gpa)));
+            output["gpa"] = {
+                "avg" : gpa_avg,
+                "sd" : gpa_sd
+            }
             //Prop. of CS experience
-            
+            output["cs_exp"] = {
+                "avg":this.unique_array_prop(obj.map(x=>x.prev_cs))
+            }
             //Prop. of grades
-            
+            output["grade"] = {
+                "avg":this.unique_array_prop(obj.map(x=>x.grade))
+            }
             //Prop. of school_type
+            output["school_type"] = {
+                "avg":this.unique_array_prop(obj.map(x=>x.school_type))
+            }
         }else if(obj instanceof Cohort){
             //assumed cohort object
 
             //Prop. of race & stdDev
             // output["race"] = ;
+            //gpa
+            // z_score = function(x,mean, stdv)
+            //calc_percentile = function(z_val)
+
             //Prop. of CS experience & stdDev
             
             //Prop. of grades & stdDev
@@ -428,6 +446,20 @@ class Statistics{
         //returns object of counts for array of strings
         let output = {};
         arr.forEach(x=>output[x] = !!output[x] ? output[x]+1 : 1);
+        return output;
+    }
+
+    unique_array_prop(arr){
+        //return object of proportions for each string
+        let output = {};
+        let counts = this.unique_array_counts(arr);
+        let sum = 0;
+        for (let x of Object.keys(counts)){
+            sum += counts[x];
+        }
+        for (let x of Object.keys(counts)){
+            output[x] = counts[x]/sum;
+        }
         return output;
     }
 
@@ -451,8 +483,8 @@ class Sort {
     constructor() {
         Cohort.fullScore(); //includes location
         Student.fullSort();
-        this.cohorts = Cohort.all.copy(); //NEEDED?
-        this.students = Student.all.copy();
+        this.cohorts = Cohort.all.map(x=>x); //NEEDED?
+        this.students = Student.all.map(x=>x);
         // this.priorities = data.priorities; //NEEDED?
     }
 
