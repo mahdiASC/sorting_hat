@@ -4,8 +4,9 @@
 // NOTE: csv need "+" as delimiter
 //if 'student.json' exists, should use to reduce API calls
 let useStudentJSON = false;
-let api_key = 'AIzaSyDlA_pTF7IbYhUehFHwmZZZW9Cs9GbVGS8';
-let directionsService = new google.maps.DirectionsService();
+// let api_key = 'AIzaSyDlA_pTF7IbYhUehFHwmZZZW9Cs9GbVGS8';
+let api_key = 'AIzaSyD5rZpry5-4tfcw_wyvHkE7DAjfQlaBHsU';
+// let directionsService = new google.maps.DirectionsService();
 let secDelay = 1;//delay in seconds for api call
 let splice_number = 100; //number of students per API call (max 100)
 let max_distance = 10; //max distance student can be from cohort in miles
@@ -237,9 +238,9 @@ class Cohort extends _base {
     // }
     
     newdistStudent(student_arr, delay, timer){
-        let self = this;
+
         setTimeout(()=>{
-            let name = self.name;
+            let name = this.name;
             console.log(name);
             let origin_string = student_arr.map(s=>encodeURIComponent(s.address)).join("|");
             // let origin_string = student_arr.map(s=>s.address.replace(/ /g, "+")).join("|");
@@ -249,6 +250,7 @@ class Cohort extends _base {
                 // dataType:"jsonp",
                 // jsonCallback:data=>console.log(data),
                 success:data=>{
+                    console.log(data);
                     let data_rows = data.rows;
                     for(let i = 0; i <student_arr.length; i++){
                         var num;
@@ -279,14 +281,14 @@ class Cohort extends _base {
 
     assignStudentDist(timer, big_delay){
         //trying not to flood the api!
-        let self = this;
         setTimeout(()=>{
+            console.log(this.name);
             let delay = 0; //millisecond delay
             let tempStudents = Student.all.map(x=>x);//making clone of array
             let students = tempStudents.splice(0,splice_number);
             while(tempStudents.length>0){
                 console.log(self.name);
-                self.newdistStudent(students, delay, timer);
+                this.newdistStudent(students, delay, timer);
                 students = tempStudents.splice(0,splice_number);
                 delay += secDelay*1000;
             }
@@ -334,19 +336,21 @@ Cohort.find_by_name = function (name) {
 }
 
 Cohort.assessStudents = function () {
-//JSON Saved students already scored
+    //JSON Saved students already scored
     let length = Student.all.length;
     let delay = 0;
-    console.log("Estimated total time "+ Math.round(secDelay*Student.all.length*Cohort.all.length/60/splice_number, 2) + " minute(s)");
+    let total_time = secDelay*Student.all.length*Cohort.all.length/splice_number;
+    let minutes = Math.floor(total_time/60, 2);
+    let seconds = Math.round(total_time - minutes*60,2);
+
+    console.log("Estimated total time "+ minutes + " minute(s) " + seconds + " second(s)")  ;
     let timer = new Timer(Student.all.length*Cohort.all.length);
-    Cohort.all=Cohort.all.splice(0,2);
     for (let cohort of Cohort.all) {
         cohort.scoreStudents();
         cohort.assignStudentDist(timer,delay);
-        delay += secDelay*1000*length;
+        delay += secDelay*1000*length/splice_number;
     }
 }
-
 
 class Student extends _base {
 
