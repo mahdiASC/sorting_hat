@@ -1,4 +1,16 @@
-let p;
+let studentFlag = true;
+let num = 600;
+
+let image_names = [
+    '1.jpg',
+    "2.jpg",
+    "3.jpg",
+    "4.jpg",
+    "5.jpg",
+    "6.jpg",
+    "7.jpg",
+    "8.jpg"
+];
 let locations = [
     "348 Cruisers Dr Polk City, FL 33868-5127",
     "8325 Broadway St 202-66 Pearland, TX 77581-5772",
@@ -34,7 +46,6 @@ let locations = [
     "10707 Corporate Dr Stafford, TX 77477-4001",
     "01 S Weber St Colorado Springs, CO 80903-2156",
     "2401 Silver Holly Ln Richardson, TX 75082-4209",
-    "Mech And Aero Engr Dept Rolla, MO 65409-0001",
     "213 Elmwood Dr Colorado Spgs, CO 80907-4355",
     "1945 Grand Pheasant Lane Lincoln, CA 95648-0000",
     "727 E 11th St Chattanooga, TN 37403-3104",
@@ -88,6 +99,7 @@ function newCohort(){
     p.push(randName());
     p.push(myRandom(15,25));
     p.push(myRandom(locations));
+    p.push(myRandom(image_names));
     p.push(myRandom(1,8));
     p.push(myRandom(1,8));
     p.push(myRandom(1,8));
@@ -97,10 +109,11 @@ function newCohort(){
 
 function setup(){
     noCanvas();
-    for (let i = 0; i < 1 ; i ++){
-        createP(newCohort());
-    }
-    for (let i = 0; i < 30 ; i ++){
-        createP(newStudent());
+    for (let i = 0; i < num ; i ++){
+        if(studentFlag){
+            createP(newStudent());
+        }else{
+            createP(newCohort());
+        }
     }
 }

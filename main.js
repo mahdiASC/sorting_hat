@@ -1,10 +1,22 @@
+// Annoying CORS
+// https://chrome.google.com/webstore/detail/allow-control-allow-origi/nlfbmbojpeacfghkpbjhddihlkkiljbi
 
 // NOTE: csv need "+" as delimiter
 //if 'student.json' exists, should use to reduce API calls
-let useStudentJSON = true;
+let useStudentJSON = false;
 let api_key = 'AIzaSyDlA_pTF7IbYhUehFHwmZZZW9Cs9GbVGS8';
 let directionsService = new google.maps.DirectionsService();
 let secDelay = 1;//delay in seconds for api call
+let splice_number = 100; //number of students per API call (max 100)
+let max_distance = 10; //max distance student can be from cohort in miles
+let priority_list = [
+    'score',
+    'ethnicity',
+    'distance',
+    'grade',
+    'school_type',
+    'prev_cs'
+]
 //REQUIRES 'mahdi.js'
 
 let graph_colors = [
@@ -142,24 +154,19 @@ Question.createFromJSON = function (obj) {
 
 class Timer {
     // in charge of keeping count and percent done
-    constructor(total_count,cohort_name){
+    constructor(total_count){
         this.total_count=total_count;
         this.current = 0;
-        console.log(`Starting ${cohort_name}`);
     }
 
-    update(){
-        this.current++;
-        if(this.done_check()){
+    update(increment){
+        this.current+=increment;
+        if(this.current>=this.total_count){
             console.log("Done!");
             addStudentDownload();
         }else{
             console.log(Math.round((this.current/this.total_count)*100,2)+"% done...");
         }
-    }
-
-    done_check(){
-        return this.current==this.total_count;
     }
 }
 
@@ -172,6 +179,7 @@ class Cohort extends _base {
         this.name = params.name;
         this.capacity = params.capacity;
         this.location = params.location;
+        this.img = params.img;
         let statKeys = Object.keys(params).filter(key => !Object.keys(this).includes(key));
         for (let i of statKeys) {
             this.ideal_stats[i] = Number(params[i]);
@@ -189,7 +197,6 @@ class Cohort extends _base {
             let diff = Math.abs(student.stats[key] - this.ideal_stats[key]);
             score += Math.pow(diff, 2);
         }
-
         //adding cohort to student's list
         student.scores.push({
             "cohort": this.name,
@@ -199,53 +206,93 @@ class Cohort extends _base {
         // return score;
     }
 
-    distStudent(student, delay, timer) {
-        //makes api request for distance
-        let name = this.name;
-        setTimeout(()=>{
-            let address = student.address;
-            let dest = this.location;
-            var request = {
-                origin: address.replace(/ /g, "+"),
-                destination: dest.replace(/ /g, "+"),
-                travelMode: google.maps.DirectionsTravelMode.DRIVING
-            };
+    // distStudent(student, delay, timer) {
+    //     //makes api request for distance
+    //     let name = this.name;
+    //     setTimeout(()=>{
+    //         let address = student.address;
+    //         let dest = this.location;
+    //         var request = {
+    //             origin: address.replace(/ /g, "+"),
+    //             destination: dest.replace(/ /g, "+"),
+    //             travelMode: google.maps.DirectionsTravelMode.DRIVING
+    //         };
 
-            directionsService.route(request, function (response, status) {
-                let num;
-                if (status == google.maps.DirectionsStatus.OK) {
-                   num = response.routes[0].legs[0].distance.value // the distance in metres
-                } else {
-                    num = Infinity;
-                    console.log("Error: " + status);
+    //         directionsService.route(request, function (response, status) {
+    //             let num;
+    //             if (status == google.maps.DirectionsStatus.OK) {
+    //                num = response.routes[0].legs[0].distance.value // the distance in metres
+    //             } else {
+    //                 num = Infinity;
+    //                 console.log("Error: " + status);
+    //             }
+    //             student.distances.push({
+    //                 "cohort": name,
+    //                 "distance": num // the distance in metres
+    //             });
+    //             // $("body").append(JSON.stringify(student));
+    //             timer.update();
+    //         });
+    //     }, delay);
+    // }
+    
+    newdistStudent(student_arr, delay, timer){
+        let self = this;
+        setTimeout(()=>{
+            let name = self.name;
+            console.log(name);
+            let origin_string = student_arr.map(s=>encodeURIComponent(s.address)).join("|");
+            // let origin_string = student_arr.map(s=>s.address.replace(/ /g, "+")).join("|");
+            let url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin_string}&destinations=${this.location.replace(/ /g, "+")}&key=AIzaSyDlA_pTF7IbYhUehFHwmZZZW9Cs9GbVGS8`
+            $.get({
+                url: url,
+                // dataType:"jsonp",
+                // jsonCallback:data=>console.log(data),
+                success:data=>{
+                    let data_rows = data.rows;
+                    for(let i = 0; i <student_arr.length; i++){
+                        var num;
+                        if(data_rows[i].elements[0].status!="OK"){
+                            num = "Infinity";
+                            console.log(student_arr[i].address);
+                            console.log("Error: "+ data_rows[i].elements[0].status);
+                        }else{
+                            num =  data_rows[i].elements[0].distance.value;// the distance in meters
+                        }
+
+                        student_arr[i].distances.push({
+                            "cohort": name,
+                            "distance": num // the distance in metres
+                        });
+                    }
+                    timer.update(student_arr.length);
                 }
-                student.distances.push({
-                    "cohort": name,
-                    "distance": num // the distance in metres
-                });
-                // $("body").append(JSON.stringify(student));
-                timer.update();
-            });
+            })
         }, delay);
     }
 
     scoreStudents() {
-        //trying not to flood the api!
-        if(!useStudentJSON){
-            let delay = 0; //millisecond delay
-            let timer = new Timer(Student.all.length, this.name);
-            for (let student of Student.all) {
-                this.scoreStudent(student);
-                this.distStudent(student, delay, timer);
-                delay += secDelay*1000;
-            }
-        }else{
-            for (let student of Student.all) {
-                this.scoreStudent(student);
-            }
+        for (let student of Student.all) {
+           this.scoreStudent(student);
         }
     }
 
+    assignStudentDist(timer, big_delay){
+        //trying not to flood the api!
+        let self = this;
+        setTimeout(()=>{
+            let delay = 0; //millisecond delay
+            let tempStudents = Student.all.map(x=>x);//making clone of array
+            let students = tempStudents.splice(0,splice_number);
+            while(tempStudents.length>0){
+                console.log(self.name);
+                self.newdistStudent(students, delay, timer);
+                students = tempStudents.splice(0,splice_number);
+                delay += secDelay*1000;
+            }
+        },big_delay);
+    }
+    
     popLowest() {
         //removes lowest scored student from class
         //sorts then pops
@@ -286,20 +333,17 @@ Cohort.find_by_name = function (name) {
     return Cohort.all.find(x => x.name == name);
 }
 
-Cohort.fullScore = function () {
+Cohort.assessStudents = function () {
+//JSON Saved students already scored
     let length = Student.all.length;
-    if(!useStudentJSON){
-        console.log("Estimated total time "+ Math.round(secDelay*Student.all.length*Cohort.all.length/60, 2) + " minute(s)");
-    }
-    
     let delay = 0;
-    if(!useStudentJSON){  //JSON Saved students already scored
-        for (let cohort of Cohort.all) {
-            setTimeout(function(){
-                cohort.scoreStudents();
-            },delay);
-            delay += secDelay*1000*length;
-        }
+    console.log("Estimated total time "+ Math.round(secDelay*Student.all.length*Cohort.all.length/60/splice_number, 2) + " minute(s)");
+    let timer = new Timer(Student.all.length*Cohort.all.length);
+    Cohort.all=Cohort.all.splice(0,2);
+    for (let cohort of Cohort.all) {
+        cohort.scoreStudents();
+        cohort.assignStudentDist(timer,delay);
+        delay += secDelay*1000*length;
     }
 }
 
@@ -553,22 +597,13 @@ class Sort {
     // average school_type +/- 3 students
 
     constructor() {
-        Cohort.fullScore(); //includes location
-        Student.fullSort();
         this.cohorts = Cohort.all.map(x=>x); //making copy
         this.students = Student.all.map(x=>x);
-        // this.priorities = data.priorities; //NEEDED?
-        this.call();
+        if(!useStudentJSON){
+            Cohort.assessStudents();
+        }
+        Student.fullSort();
     }
-
-    call() {
-        //does sorting algorithm;
-        this.fillRosters();
-
-        //creates waitlist
-        // this.createWaitlist();
-    }
-
 
     fillRosters() {
         //fills cohorts based on threshold restricitons and student priorities
@@ -579,36 +614,60 @@ class Sort {
             throw new Error(`Number of students (${this.students.length}) insufficient to fill cohorts${this.cohorts.reduce((sum,val)=>sum+Number(val.capacity),0)}`);
         }
 
-        // let priority = 0; //start with first choice and keeps decreasing until cohorts filled.
-        // while(this.unfilledCohorts().length>0){
-        //     this.fill_roster_by(priority);
-        //     priority ++;
-        // }
-
-
-        // PLAN
-        // 1) ADD PRIORITY STUDENTS UNTIL BLACK/LATINO quota filled
-        // 2) If quota filled, try distance (log(distance)?)
-        // 2) If 
+        
+        let priority = {
+            index: 0, 
+            num: 0 //start with first choice and keeps decreasing until cohorts filled. 
+        }; 
+        
+        while(this.unfilledCohorts().length>0){
+            this.fill_roster_by(priority_list[priority.index]);
+            priority.index ++;
+            if(priority.index >= priority_list.length){
+                priority.index = 0;
+            }
+        }
     }
 
-    fill_roster_by(num) {
+    fill_roster_by(priority,priority_obj) {
         //priority to first picks
-        //first fill classes
-        this.students.forEach(student => {
-            if (!student.cohort) {
-                let cohort = Cohort.find_by_name(student.scores[num].cohort);
-                cohort.add_student(student);
-            }
-        })
-        //then wean out lowest scores
-        this.cohorts.forEach(cohort => {
-            while (cohort.class.length > cohort.capacity) {
-                cohort.popLowest();
-            }
-        })
+        switch (priority){
+            case "score":
+                let num = priority_obj.num;
+                this.students.forEach(student => {
+                    if (!student.cohort) {
+                        let cohort = Cohort.find_by_name(student.scores[num].cohort);
+                        cohort.add_student(student);
+                    }
+                })
+                //then wean out lowest scores
+                this.cohorts.forEach(cohort => {
+                    while (cohort.class.length > cohort.capacity) {
+                        cohort.popLowest();
+                    }
+                })
+                priority_obj.num++;
+                break;
+            case "ethnicity":
+                // ~80% of black or latino
+                // Filter cohorts violating this rule
+                // if there's 1 or more, remove lowest score non-black or latino, add in next best candidate that is black/latino from cohort's sorted list of all students by score (without a cohort)
+                // repeat until 80% black and latino
+                break;
+            case "distance":
+                // score on location (limit of 10 miles around the cohort!) <16093.4 meters
 
-        // this.removeFromWaitlists();
+                break;
+            case "grade":
+                // average grade +/- 1 student
+                break;
+            case 'school_type':
+                // average school_type +/- 3 students
+                break;
+            case "prev_cs":
+                // average cs experience of +/- 1 student
+                break;
+        }
     }
 
     createWaitlist() {
@@ -649,10 +708,11 @@ var store_file = function(file, func){
     });
 }
 
-let x;
+// let x;
+let max_distance_meters;
 function setup() {
     noCanvas();
-
+    max_distance_meters = max_distance *1609.34;
     //loading data into files
     store_file("cohorts.csv",x => Cohort.createFromCSVString(x));
     store_file("questions.json",x => Question.createFromJSON(x));
@@ -664,7 +724,7 @@ function setup() {
     }
 
     //FOR TESTING
-    x=new Statistic();
-    Cohort.all[0].class=Student.all;
+    // x=new Statistic();
+    // Cohort.all[0].class=Student.all;
 
 }
