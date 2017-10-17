@@ -72,6 +72,15 @@ class Cohort extends _base {
         for (let student of Student.all) {
            this.scoreStudent(student);
         }
+        this.sortStudentScores();//creating waitlist by score
+    }
+
+    sortStudentScores(){
+        this.waitlist = Student.all.sort((a,b)=>{
+            let fa = a.scores.find(x=>x.cohort==this.name);
+            let fb = b.scores.find(x=>x.cohort==this.name);
+            return fa.score-fb.score;
+        });
     }
 
     assignStudentDist(timer, big_delay){

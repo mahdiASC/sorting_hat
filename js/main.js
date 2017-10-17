@@ -3,19 +3,19 @@
 // NOTE: csv need "+" as delimiter
 //if 'student.json' exists, should use to reduce API calls
 let useStudentJSON = true;
-// let api_key = 'AIzaSyDlA_pTF7IbYhUehFHwmZZZW9Cs9GbVGS8';
-let api_key = 'AIzaSyD5rZpry5-4tfcw_wyvHkE7DAjfQlaBHsU';
+let api_key = 'AIzaSyDlA_pTF7IbYhUehFHwmZZZW9Cs9GbVGS8';
 // let directionsService = new google.maps.DirectionsService();
 let secDelay = 1;//delay in seconds for api call
 let splice_number = 100; //number of students per API call (max 100)
 let max_distance = 10; //max distance student can be from cohort in miles
 let priorities = [
-    "score",
-    "ethnicity",
-    "distance",
-    "grade",
-    "school_type",
-    "prev_cs"
+    "score"
+    // ,
+    // "ethnicity",
+    // "distance",
+    // "grade",
+    // "school_type",
+    // "prev_cs"
 ]
 
 let graph_colors = [
@@ -31,6 +31,20 @@ let graph_colors = [
 let max_distance_meters= max_distance *1609.34;
 let priority_list = priorities.map(x=>Priority.find_by_name(x));
 
+var store_file = function(file, func){
+    //helper method for making ajax request on local files
+    let re = new RegExp(".csv");
+    let _type = re.exec(file) ? "text" : "json";
+    $.get({
+        url: file,
+        async: false,
+        dataType: _type,
+        success: func
+    });
+}
+
+let y;
+
 function setup() {
     noCanvas();
     //loading data into files
@@ -42,16 +56,7 @@ function setup() {
     } else {
         store_file("../students.csv",x => Student.createFromCSVString(x));
     }
-}
 
-var store_file = function(file, func){
-    //helper method for making ajax request on local files
-    let re = new RegExp(".csv");
-    let _type = re.exec(file) ? "text" : "json";
-    $.get({
-        url: file,
-        async: false,
-        dataType: _type,
-        success: func
-    });
+    y = new Sort();
+    
 }

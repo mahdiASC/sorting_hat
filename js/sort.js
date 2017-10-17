@@ -14,7 +14,7 @@ class Sort {
         if(!useStudentJSON){
             Cohort.assessStudents();
         }
-        Student.fullSort();
+        Student.fullSort();//students have their self scores sorted by best scores first
     }
 
     fillRosters() {
@@ -33,6 +33,7 @@ class Sort {
         //filling out cohorts first by score
         //loops down the priority list diminishing each successive round until only 
         while(indx_reset>0){
+            //for each priority in priority_list, will cycle through each priority's .call()
             this.cohorts.forEach(x=>priority_list[priority_indx].call(x));
             priority_indx ++;
             if(priority_indx >= indx_reset){
