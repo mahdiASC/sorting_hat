@@ -48,13 +48,17 @@ let y;
 function setup() {
     noCanvas();
     //loading data into files
-    store_file("../cohorts.csv",x => Cohort.createFromCSVString(x));
-    store_file("../questions.json",x => Question.createFromJSON(x));
+    store_file("mahdiASC.github.io/sorting_hat/cohorts.csv",x => Cohort.createFromCSVString(x));
+    // store_file("../cohorts.csv",x => Cohort.createFromCSVString(x));
+    store_file("mahdiASC.github.io/sorting_hat/questions.json",x => Question.createFromJSON(x));
+    // store_file("../questions.json",x => Question.createFromJSON(x));
     //loading students as JSON (from previous load)
     if (useStudentJSON) {
-        store_file("../students.json",x => Student.createFromJSON(x));
+        store_file("mahdiASC.github.io/sorting_hat/students.json",x => Student.createFromJSON(x));
+        // store_file("../students.json",x => Student.createFromJSON(x));
     } else {
-        store_file("../students.csv",x => Student.createFromCSVString(x));
+        store_file("mahdiASC.github.io/sorting_hat/students.csv",x => Student.createFromCSVString(x));
+        // store_file("../students.csv",x => Student.createFromCSVString(x));
     }
 
     y = new Sort();
