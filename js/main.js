@@ -28,6 +28,21 @@ let graph_colors = [
     "rgba(235,55,55,0.75)",
     "rgba(200,222,235,0.75)"
 ]
+
+
+let urls = [
+    "https://raw.githubusercontent.com/mahdiASC/sorting_hat/master/cohorts.csv",
+    "https://raw.githubusercontent.com/mahdiASC/sorting_hat/master/questions.json",
+    "https://raw.githubusercontent.com/mahdiASC/sorting_hat/master/students.json",
+    "https://raw.githubusercontent.com/mahdiASC/sorting_hat/master/students.csv"
+];
+
+// let urls = [
+//     "../cohort.csv",
+//     "../questions.json",
+//     "../students.csv",
+//     "../students.json"
+// ];
 let max_distance_meters= max_distance *1609.34;
 let priority_list = priorities.map(x=>Priority.find_by_name(x));
 
@@ -48,16 +63,16 @@ let y;
 function setup() {
     noCanvas();
     //loading data into files
-    store_file("http://mahdiASC.github.io/sorting_hat/cohorts.csv",x => Cohort.createFromCSVString(x));
+    store_file(urls[0],x => Cohort.createFromCSVString(x));
     // store_file("../cohorts.csv",x => Cohort.createFromCSVString(x));
-    store_file("http://mahdiASC.github.io/sorting_hat/questions.json",x => Question.createFromJSON(x));
+    store_file(urls[1],x => Question.createFromJSON(x));
     // store_file("../questions.json",x => Question.createFromJSON(x));
     //loading students as JSON (from previous load)
     if (useStudentJSON) {
-        store_file("http://mahdiASC.github.io/sorting_hat/students.json",x => Student.createFromJSON(x));
+        store_file(urls[2],x => Student.createFromJSON(x));
         // store_file("../students.json",x => Student.createFromJSON(x));
     } else {
-        store_file("http://mahdiASC.github.io/sorting_hat/students.csv",x => Student.createFromCSVString(x));
+        store_file(urls[3],x => Student.createFromCSVString(x));
         // store_file("../students.csv",x => Student.createFromCSVString(x));
     }
 
