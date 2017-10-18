@@ -97,7 +97,7 @@ class Cohort extends _base {
         },big_delay);
     }
     
-    popLowest() {
+    popLowest(arr) {
         //removes lowest scored student from class
         //sorts then pops
         this.class.sort((a,b)=>{
@@ -113,23 +113,33 @@ class Cohort extends _base {
     add_student(student) {
         //adds student object to class (no limit)
         //also adds cohort to student!
-        this.class.push(student);
-        if(this.waitlist.indexOf(student)>-1){
-            let index = this.waitlist.indexOf(student);
-            this.waitlist.splice(index,1);
+        
+        if(Array.isArray(student)){
+            student.forEach(x=>this.add_student(x));
+        }else{
+            this.class.push(student);
+            if(this.waitlist.indexOf(student)>-1){
+                let index = this.waitlist.indexOf(student);
+                this.waitlist.splice(index,1);
+            }
+            student.cohort = this.name; //take into account when pop
         }
-        student.cohort = this.name; //take into account when pop
+
     }
 
     remove_student(student){
-        if(this.class.indexOf(student)==-1){
-            throw new Error(`Student not in ${this.name}'s .class`);
-        }
-
-        delete student.cohort;
-        //adding to wait list
-        this.waitlist.push(student);
-        return this.class.splice(this.class.findIndex(x=>x==student),1);
+        if(Array.isArray(student)){
+            student.forEach(x=>this.remove_student(x));
+        }else{
+            if(this.class.indexOf(student)==-1){
+                throw new Error(`Student not in ${this.name}'s .class`);
+            }
+    
+            delete student.cohort;
+            //adding to wait list
+            this.waitlist.push(student);
+            return this.class.splice(this.class.findIndex(x=>x==student),1);
+        }        
     }
 
     fullcheck() {

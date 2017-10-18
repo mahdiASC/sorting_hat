@@ -111,6 +111,20 @@ class Statistic{
 
         }
     }
+
+    scoreHappiness(cohort){
+        // "happiness" of student's cohort by priority score
+        let score = [];
+        for(let student of cohort.class){
+            let cohort_score_obj = student.scores.find(x=>x.cohort==student.cohort);
+            let result = student.scores.indexOf(cohort_score_obj);
+            if(result < 0){
+                throw new Error(`Student ${student.name} could not be found in class of ${cohort.name}`);
+            }
+            score.push(result);
+        }
+        return avgArray(score);
+    }
 }
 
 let makeGraph = function(name, myData){

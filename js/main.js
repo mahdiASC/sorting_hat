@@ -58,7 +58,7 @@ var store_file = function(file, func){
     });
 }
 
-let y;
+let x,y;
 
 function setup() {
     noCanvas();
@@ -77,5 +77,6 @@ function setup() {
     }
 
     y = new Sort();
-    // y.fillRosters();
+    x = new Statistic();
+
 }

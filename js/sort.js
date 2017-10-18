@@ -15,7 +15,7 @@ class Sort {
             Cohort.assessStudents();
         }
         Student.fullSort();//students have their self scores sorted by best scores first
-
+        this.fillRosters();
     }
 
     fillRosters() {
