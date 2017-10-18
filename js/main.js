@@ -7,15 +7,15 @@ let api_key = 'AIzaSyDlA_pTF7IbYhUehFHwmZZZW9Cs9GbVGS8';
 // let directionsService = new google.maps.DirectionsService();
 let secDelay = 1;//delay in seconds for api call
 let splice_number = 100; //number of students per API call (max 100)
-let max_distance = 10; //max distance student can be from cohort in miles
+let max_travel_time = 1; //in hours
+// TURN INTO TIME NOT DISTANCE (under 1 hour time)
+
 let priorities = [
     "score"
     // ,
     // "ethnicity",
-    // "distance",
-    // "grade",
-    // "school_type",
-    // "prev_cs"
+    // "duration",
+    // "grade"
 ]
 
 let graph_colors = [
@@ -30,20 +30,20 @@ let graph_colors = [
 ]
 
 
-let urls = [
-    "https://raw.githubusercontent.com/mahdiASC/sorting_hat/master/cohorts.csv",
-    "https://raw.githubusercontent.com/mahdiASC/sorting_hat/master/questions.json",
-    "https://raw.githubusercontent.com/mahdiASC/sorting_hat/master/students.json",
-    "https://raw.githubusercontent.com/mahdiASC/sorting_hat/master/students.csv"
-];
-
 // let urls = [
-//     "../cohort.csv",
-//     "../questions.json",
-//     "../students.csv",
-//     "../students.json"
+//     "https://raw.githubusercontent.com/mahdiASC/sorting_hat/master/cohorts.csv",
+//     "https://raw.githubusercontent.com/mahdiASC/sorting_hat/master/questions.json",
+//     "https://raw.githubusercontent.com/mahdiASC/sorting_hat/master/students.json",
+//     "https://raw.githubusercontent.com/mahdiASC/sorting_hat/master/students.csv"
 // ];
-let max_distance_meters= max_distance *1609.34;
+
+let urls = [
+    "./cohorts.csv",
+    "./questions.json",
+    "./students.csv",
+    "./students.json"
+];
+let max_seconds= max_travel_time *3600;
 let priority_list = priorities.map(x=>Priority.find_by_name(x));
 
 var store_file = function(file, func){
@@ -69,13 +69,13 @@ function setup() {
     // store_file("../questions.json",x => Question.createFromJSON(x));
     //loading students as JSON (from previous load)
     if (useStudentJSON) {
-        store_file(urls[2],x => Student.createFromJSON(x));
+        store_file(urls[3],x => Student.createFromJSON(x));
         // store_file("../students.json",x => Student.createFromJSON(x));
     } else {
-        store_file(urls[3],x => Student.createFromCSVString(x));
+        store_file(urls[2],x => Student.createFromCSVString(x));
         // store_file("../students.csv",x => Student.createFromCSVString(x));
     }
 
     y = new Sort();
-    
+    // y.fillRosters();
 }

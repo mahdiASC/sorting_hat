@@ -54,12 +54,12 @@ class Cohort extends _base {
                             console.log(student_arr[i].address);
                             console.log("Error: "+ data_rows[i].elements[0].status);
                         }else{
-                            num =  data_rows[i].elements[0].distance.value;// the distance in meters
+                            num =  data_rows[i].elements[0].duration.value;// the diratopm in second
                         }
 
                         student_arr[i].distances.push({
                             "cohort": name,
-                            "distance": num // the distance in metres
+                            "duration": num
                         });
                     }
                     timer.update(student_arr.length);
@@ -76,7 +76,7 @@ class Cohort extends _base {
     }
 
     sortStudentScores(){
-        this.waitlist = Student.all.sort((a,b)=>{
+        this.waitlist = Student.all.filter(x=>!x.cohort).sort((a,b)=>{
             let fa = a.scores.find(x=>x.cohort==this.name);
             let fb = b.scores.find(x=>x.cohort==this.name);
             return fa.score-fb.score;
@@ -86,7 +86,6 @@ class Cohort extends _base {
     assignStudentDist(timer, big_delay){
         //trying not to flood the api!
         setTimeout(()=>{
-            console.log(this.name);
             let delay = 0; //millisecond delay
             let tempStudents = Student.all.map(x=>x);//making clone of array
             let students = tempStudents.splice(0,splice_number);
@@ -101,8 +100,13 @@ class Cohort extends _base {
     popLowest() {
         //removes lowest scored student from class
         //sorts then pops
-        this.class.sort((a, b) => a.score - b.score);
+        this.class.sort((a,b)=>{
+            let fa = a.scores.find(x=>x.cohort==this.name);
+            let fb = b.scores.find(x=>x.cohort==this.name);
+            return fa.score-fb.score;
+        });
         let student = this.class.pop();
+        this.waitlist.push(student);
         delete student.cohort;
     }
 
@@ -110,11 +114,21 @@ class Cohort extends _base {
         //adds student object to class (no limit)
         //also adds cohort to student!
         this.class.push(student);
+        if(this.waitlist.indexOf(student)>-1){
+            let index = this.waitlist.indexOf(student);
+            this.waitlist.splice(index,1);
+        }
         student.cohort = this.name; //take into account when pop
     }
 
     remove_student(student){
+        if(this.class.indexOf(student)==-1){
+            throw new Error(`Student not in ${this.name}'s .class`);
+        }
+
         delete student.cohort;
+        //adding to wait list
+        this.waitlist.push(student);
         return this.class.splice(this.class.findIndex(x=>x==student),1);
     }
 

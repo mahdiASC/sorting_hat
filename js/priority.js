@@ -1,11 +1,19 @@
 class Priority{
     constructor(str, func){
         this.priority=str;
-        this.call=func
         if (!this.constructor.all) {
             this.constructor.all = []
         }
         this.constructor.all.push(this);
+        this.call_func=()=>func.bind(this)();
+    }
+
+    unfilled_cohorts(){
+        return Cohort.all.filter(x=>!x.fullcheck());
+    }
+    
+    waiting_students(){
+        return Student.all.filter(x=>!x.cohort);
     }
 }
 
@@ -15,22 +23,26 @@ Priority.find_by_name = function(str){
 
 new Priority(
     "score",
-    cohort=>{
-        let indx = 0;
-        let templist = Student.all.filter(x=>!x.cohort).sort((a,b)=>a.scores[indx].score-b.scores[indx].score);
-        console.log(this);
-        while(!cohort.fullcheck() || indx >= Cohort.all.length){
-            templist.forEach(x=>{
-                cohort.add_student(x);
-            });
-            
-            indx++;
-            templist = Student.all.filter(x=>!x.cohort).sort((a,b)=>a.scores[indx].score-b.scores[indx].score);
+    function(){
+        if(this.counter){
+            this.counter++;//each call will go to next priority for student
+        }else{
+            this.counter = 0;
         }
 
-        while(cohort.class.length>cohort.capacity){
-            cohort.popLowest();
-        }
+        let unfilled_cohorts = this.unfilled_cohorts();
+        
+        this.waiting_students().forEach(student=>{
+            let cohort_name = student.scores[this.counter].cohort;
+            Cohort.find_by_name(cohort_name).add_student(student);
+        });
+
+        unfilled_cohorts.forEach(cohort=>{
+            while(cohort.class.length>cohort.capacity){
+                cohort.popLowest();
+            }
+        })
+
     });
 
 new Priority(

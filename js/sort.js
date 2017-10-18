@@ -15,6 +15,7 @@ class Sort {
             Cohort.assessStudents();
         }
         Student.fullSort();//students have their self scores sorted by best scores first
+
     }
 
     fillRosters() {
@@ -26,27 +27,21 @@ class Sort {
             throw new Error(`Number of students (${this.students.length}) insufficient to fill cohorts${this.cohorts.reduce((sum,val)=>sum+Number(val.capacity),0)}`);
         }
 
-        
-        let priority_indx = 0;
-        let indx_reset = priority_list.length;
-        
-        //filling out cohorts first by score
         //loops down the priority list diminishing each successive round until only 
-        while(indx_reset>0){
+
+        let temp_list = priority_list.map(x=>x);
+
+        while(temp_list.length>0){
             //for each priority in priority_list, will cycle through each priority's .call()
-            this.cohorts.forEach(x=>priority_list[priority_indx].call(x));
-            priority_indx ++;
-            if(priority_indx >= indx_reset){
-                priority_indx = 0;
-                indx_reset --;
-            }
+            temp_list.forEach(x=>x.call_func());
+            temp_list.pop();
         }
     }
 
-    createWaitlist() {
-        //creates waitlist
-        this.waitlist = this.students.filter(s => !s.cohort);
-    }
+    // createWaitlist() {
+    //     //creates waitlist
+    //     this.waitlist = this.students.filter(s => !s.cohort);
+    // }
 
     unfilledCohorts() {
         //returns array of unfilled Cohort objects
@@ -54,6 +49,7 @@ class Sort {
     }
 
     get waitlist() {
-        return this.students.filter(s => !!s.cohort);
+        return this.students.filter(s => !s.cohort);
     }
+
 }
