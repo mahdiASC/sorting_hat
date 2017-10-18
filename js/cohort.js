@@ -83,6 +83,19 @@ class Cohort extends _base {
         });
     }
 
+    sortClass(direction = "asc"){
+        //reversible sort
+        return this.class.sort((a,b)=>{
+            let fa = a.scores.find(x=>x.cohort==this.name);
+            let fb = b.scores.find(x=>x.cohort==this.name);
+            if(direction = "asc"){
+                return fa.score-fb.score;
+            }else{
+                return fb.score-fa.score;
+            }
+        });
+    }
+
     assignStudentDist(timer, big_delay){
         //trying not to flood the api!
         setTimeout(()=>{
@@ -118,13 +131,9 @@ class Cohort extends _base {
             student.forEach(x=>this.add_student(x));
         }else{
             this.class.push(student);
-            if(this.waitlist.indexOf(student)>-1){
-                let index = this.waitlist.indexOf(student);
-                this.waitlist.splice(index,1);
-            }
             student.cohort = this.name; //take into account when pop
+            this.sortStudentScores();
         }
-
     }
 
     remove_student(student){
@@ -137,8 +146,8 @@ class Cohort extends _base {
     
             delete student.cohort;
             //adding to wait list
-            this.waitlist.push(student);
             return this.class.splice(this.class.findIndex(x=>x==student),1);
+            this.sortStudentScores();
         }        
     }
 
@@ -146,7 +155,6 @@ class Cohort extends _base {
         // returns true if class full
         return this.class >= this.capacity;
     }
-
 }
 
 Cohort.find_by_name = function (name) {

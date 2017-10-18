@@ -1,21 +1,27 @@
 // Annoying CORS
 // https://chrome.google.com/webstore/detail/allow-control-allow-origi/nlfbmbojpeacfghkpbjhddihlkkiljbi
 // NOTE: csv need "+" as delimiter
-//if 'student.json' exists, should use to reduce API calls
+
 let useStudentJSON = true;
 let api_key = 'AIzaSyDlA_pTF7IbYhUehFHwmZZZW9Cs9GbVGS8';
-// let directionsService = new google.maps.DirectionsService();
 let secDelay = 1;//delay in seconds for api call
 let splice_number = 100; //number of students per API call (max 100)
 let max_travel_time = 1; //in hours
+let white_threshold = .03; //percentage of applicants we will consider - randomly removed up to this percent
+let minority_rate = 0.8; //the percentage of brown students per cohort (this is rounded down by minority_leeway students as a minimum)
+let minority_leeway = 2; //# of students that lowers the bar for minority_rate 
+let grade_leeway = 2; //# of students that lowers the bar for grade level disparity (between 10th and 11th);
 // TURN INTO TIME NOT DISTANCE (under 1 hour time)
 
+// ARE WE EXCLUDING WHITE APPLICANTS, PERIOD?
 let priorities = [
     "score"
-    // ,
-    // "ethnicity",
-    // "duration",
-    // "grade"
+    ,
+    "duration"
+    ,
+    "ethnicity"
+    ,
+    "grade"
 ]
 
 let graph_colors = [
@@ -43,9 +49,9 @@ let urls = [
     "./students.csv",
     "./students.json"
 ];
-let max_seconds= max_travel_time *3600;
+// let max_seconds = max_travel_time *3600;
+let max_seconds = 1936026; //OMIT THIS (just for testing)
 let priority_list = priorities.map(x=>Priority.find_by_name(x));
-
 var store_file = function(file, func){
     //helper method for making ajax request on local files
     let re = new RegExp(".csv");
@@ -76,7 +82,12 @@ function setup() {
         // store_file("../students.csv",x => Student.createFromCSVString(x));
     }
 
+    //Filtering out white applicants to threshold
+
+    //CODE THIS!
+
     y = new Sort();
     x = new Statistic();
-
+    //verify no students belong to multiple cohorts
+    //CODE THIS!
 }

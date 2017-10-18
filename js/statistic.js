@@ -6,6 +6,7 @@ class Statistic{
         this.s_stats = {}; //will contain stats for all students
         this.c_stats = {}; //will contain all cohort specific stats by cohort name
         this.student_stats(); //must establish first
+        this.cohort_stats();
     }
     
     student_stats(){
@@ -100,11 +101,15 @@ class Statistic{
                 // }else{}
             }
 
+            //giving happiness score
+            // $("body").append(`<p>Average Student Happiness: ${this.scoreHappiness(Cohort.find_by_name(name))}</p>`);
             //listing students
             let add_string=`<ol id=${name}_students>`;
             let c_class = Cohort.find_by_name(name).class;
             for(let student of c_class){
-                add_string +=`<li>${student.name}</li>`;
+                // let travel_time = student.durations.find(x=>x.cohort==student.cohort).duration;
+                let travel_time = student.distances.find(x=>x.cohort==student.cohort).distance; //OMIT (change to duration)
+                add_string +=`<li>${student.name} - Travel time to ${capFirst(student.cohort)}: ~${Math.round(travel_time/60/60,2)} minutes - Grade: ${student.grade}th</li>`;
             }
             add_string +=`</ol>`;
             $("body").append(add_string);
