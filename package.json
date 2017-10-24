@@ -1,0 +1,22 @@
+{
+  "name": "sorting_hat",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "chart.js": "^2.7.0",
+    "jasmine": "^2.8.0"
+  },
+  "devDependencies": {},
+  "scripts": { "test": "jasmine" },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mahdiASC/sorting_hat.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mahdiASC/sorting_hat/issues"
+  },
+  "homepage": "https://github.com/mahdiASC/sorting_hat#readme"
+}

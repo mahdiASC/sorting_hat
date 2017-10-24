@@ -44,10 +44,10 @@ let graph_colors = [
 // ];
 
 let urls = [
-    "./cohorts.csv",
-    "./questions.json",
-    "./students.csv",
-    "./students.json"
+    "./data/cohorts.csv",
+    "./data/questions.json",
+    "./data/students.csv",
+    "./data/students.json"
 ];
 // let max_seconds = max_travel_time *3600;
 let max_seconds = 1936026; //OMIT THIS (just for testing)
@@ -64,7 +64,7 @@ var store_file = function(file, func){
     });
 }
 
-let x,y;
+let x,y,z;
 
 function setup() {
     noCanvas();
@@ -87,7 +87,10 @@ function setup() {
     //CODE THIS!
 
     y = new Sort();
+
     x = new Statistic();
     //verify no students belong to multiple cohorts
-    //CODE THIS!
+    z = new Validate();
+    z.main();
 }
+

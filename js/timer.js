@@ -9,18 +9,25 @@ class Timer {
         this.current+=increment;
         if(this.current>=this.total_count){
             console.log("Done!");
-            addStudentDownload();
+            this.addStudentDownload();
         }else{
             console.log(Math.round((this.current/this.total_count)*100,2)+"% done...");
         }
     }
+    
+    addStudentDownload(){
+        let url = makeTextFile(JSON.stringify(Student.all));
+        $("body").append($("<a />", {
+            href: url,
+            text: "Download",
+            download: "students.json"
+        }));
+    }
 }
 
-addStudentDownload = function(){
-    let url = makeTextFile(JSON.stringify(Student.all));
-    $("body").append($("<a />", {
-        href: url,
-        text: "Download",
-        download: "students.json"
-    }));
+
+// Export node module.
+if ( typeof module !== 'undefined' && module.hasOwnProperty('exports') )
+{
+    module.exports = Timer;
 }
