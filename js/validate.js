@@ -1,7 +1,7 @@
 class Validate{
-    constructor(){
-        this.cohorts = Cohort.all;
-        this.students = Student.all;
+    constructor(cohorts,students){
+        this.cohorts = cohorts || Cohort.all; //hacky solution for testing
+        this.students = students || Student.all;
     }
 
     main(){
@@ -37,4 +37,10 @@ class Validate{
         }
         return output;
     }
+}
+
+// Export node module.
+if ( typeof module !== 'undefined' && module.hasOwnProperty('exports') )
+{
+    module.exports = Validate;
 }
