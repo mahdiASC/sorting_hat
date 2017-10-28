@@ -1,4 +1,8 @@
-// let Papa = require('../js/papaparse.js');
+// Export node module.
+if ( typeof module !== 'undefined')
+{
+let Papa = require('../js/papaparse.js');
+}
 
 class _base {
     //handles basic initialization and ALL storage for each

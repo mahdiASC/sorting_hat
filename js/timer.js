@@ -25,7 +25,6 @@ class Timer {
     }
 }
 
-
 // Export node module.
 if ( typeof module !== 'undefined' && module.hasOwnProperty('exports') )
 {

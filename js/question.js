@@ -1,3 +1,9 @@
+// Export node module.
+if ( typeof module !== 'undefined')
+{
+    var _base = require("../js/base.js");
+}
+
 class Question extends _base {
 
     outcome(choice) {
@@ -65,4 +71,10 @@ Question.createFromJSON = function (obj) {
             Question.createFromJSON(obj[i]);
         }
     }
+}
+
+// Export node module.
+if ( typeof module !== 'undefined' && module.hasOwnProperty('exports') )
+{
+    module.exports = Question;
 }
