@@ -1,8 +1,10 @@
+// let Papa = require('../js/papaparse.js');
+
 class _base {
     //handles basic initialization and ALL storage for each
     //extended class
     constructor(params) {
-        if (!this.constructor.all) {
+        if (!this.constructor.all){
             this.constructor.all = []
         }
         this.constructor.all.push(this);
@@ -19,16 +21,22 @@ _base.createFromCSVString = function (fileString) {
         complete: function (results) {
             let header = results.data[0];
             for (let i = 1; i < results.data.length; i++) {
-                parseObjects.apply(self, [header, results.data[i]]);
+                _parseObjects.apply(self, [header, results.data[i]]);
             }
         }
     });
 }
 
-const parseObjects = function (header, arr) {
+_parseObjects = function (header, arr) {
     let output = {};
     for (let x in header) {
         output[header[x]] = arr[x];
     }
     new this(output);
+}
+
+// Export node module.
+if ( typeof module !== 'undefined' && module.hasOwnProperty('exports') )
+{
+    module.exports = _base;
 }
