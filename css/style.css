@@ -1,0 +1,84 @@
+@import url('https://fonts.googleapis.com/css?family=Eczar|Neuton');
+
+/* font-family: 'Eczar', serif; */
+/* font-family: 'Neuton', serif; */
+article{
+    border: red 1px solid;
+    padding-top: .5em;
+}
+
+body{
+    text-align: center;
+}
+
+article>header{
+    border: blue 1px solid;
+}
+
+header p{
+    margin: 0;
+}
+
+h1,h2,h3,h4{
+    color:rgb(80,193,233);
+    font-family: 'Eczar', serif;
+    margin: 0;
+    line-height: 1em;
+}
+
+p{
+    color: black;  
+    font-family: 'Neuton', serif;
+}
+.chart-container{
+    position: relative;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.top h1, [id*='_students'] h2{
+    margin-top: .5em;
+}
+
+.stat_graph{
+    border: green 1px solid;
+    width: 227px;
+    display: inline-block;
+    height: 333px;
+    font-size: 13px;
+}
+
+/* cool table */
+
+table {
+    border: blue 2px dotted;
+    display: inline-table;
+    margin: 1em 0;
+    width: 100%;
+    overflow: hidden;
+    background: #FFF;
+    color: #024457;
+    border-radius: 10px;
+    border: 1px solid #167F92;
+  }
+  table tr {
+    border: 1px solid #D9E4E6;
+  }
+  table tr:nth-child(odd) {
+    background-color: #EAF3F3;
+  }
+  table th {
+    display: none;
+    border: 1px solid #FFF;
+    background-color: #167F92;
+    color: #FFF;
+    padding: 1em;
+  }
+  table th:first-child {
+    display: table-cell;
+    text-align: center;
+  }
+  table th {
+    display: table-cell;
+  }
+

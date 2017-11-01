@@ -92,6 +92,13 @@ class Statistic{
             "prev_cs"
         ];
 
+        let stats_proper = [
+            "Ethnicity",
+            "School Type",
+            "Grade",
+            "Prev. CS"
+        ]
+
         this.cohort_stats();
         for(let name of Object.keys(this.c_stats)){
             
@@ -107,22 +114,26 @@ class Statistic{
             title.append(`<h4>Size: ${cohort.class.length}</h4>`);//class size
             title.append(`<p>Discontent Rating: ${Math.round(c_stat.discontent.avg)}</h2>`);//happiness of class
             article.append(title);
+            
+            let graphs_container = $('<div class="graphs_container"/>');
+            article.append(graphs_container);
 
-            for( let stat of stats){
+            for( let i = 0; i<stats.length; i++){
                 //graph head w/graph
+                let stat = stats[i];
                 let thumbnail = $('<div class="stat_graph"/>');
-                article.append(thumbnail);
+                graphs_container.append(thumbnail);
                 let thumb_head = $('<div class="thumb_head"/>');
-                thumb_head.append(`<header>${capFirst(stat)}</header>`);
+                thumb_head.append(`<header>${stats_proper[i]}</header>`);
                 thumbnail.append(thumb_head);
-                thumbnail.append(`<div class="chart-container" style="position: relative; height:30vh; width:30vw"><canvas id="${name}_${stat}" width:300px height:300px></canvas></div>`);
+                thumbnail.append(`<div class="chart-container"><canvas id="${name}_${stat}"></canvas></div>`);
                 makeGraph(`${name}_${stat}`, c_stat[stat].avg);
 
                 //graph stats
                 let stats_obj = c_stat[stat].avg;
                 let stat_keys = Object.keys(stats_obj).sort((a,b)=>stats_obj[b]-stats_obj[a]);
                 let listo = $("<table/>");
-                let list_head = $(`<tr><th>${capFirst(stat)}</th><th>Percentage(%)</th></tr>`);
+                let list_head = $(`<tr><th>${stats_proper[i]}</th><th>Percentage(%)</th></tr>`);
                 listo.append(list_head);
                 for(let s = 0; s<stat_keys.length; s++){
                     let info = stat_keys[s];
@@ -153,7 +164,7 @@ class Statistic{
                 "Grade",
                 "School Type",
                 "CS skill?",
-                "Travel Time (min)",
+                "Travel (min)",
                 "Displeasure"
             ];
             function _addHeader(table){
