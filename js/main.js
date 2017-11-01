@@ -89,8 +89,9 @@ function setup() {
     y = new Sort();
 
     x = new Statistic();
+    x.visualize_stats()
     //verify no students belong to multiple cohorts
-    z = new Validate();
-    z.main();
+    // z = new Validate();
+    // z.main();
 }
 

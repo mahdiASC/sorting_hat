@@ -1,10 +1,25 @@
-// Export node module.
-if ( typeof module !== 'undefined')
-{
-    var _base = require("../js/base.js");
-}
+class Question{
+    constructor(params) {
+        if (!Question.all){
+            Question.all = []
+        }
+        Question.all.push(this);
+        for (let i in params) {
+            this[i] = params[i];
+        }
 
-class Question extends _base {
+        for (let k = 0; k<this.answers.length; k++){
+            let answer = this.answers[k];
+            if(answer.sub_q){
+                answer.sub_q = new Question(answer.sub_q);
+                answer.sub_q.parent = this.id;
+            }
+        }
+    }
+
+    get all(){
+        return constructor.all;
+    }
 
     outcome(choice) {
         return this.answers.find(c => c.text == choice).outcome;
@@ -20,30 +35,24 @@ Question.next = (q, choice) => {
     //returns the next logical Question object by traversing linkage backwards
     //handles sub_q
     let found = q.answers.find(x => x.text == choice);
-    if (Object.keys(found).some(key => key == "sub_q")) {
-        return found.sub_q;
-    } else {
-        //backtrack 
-        let root = Question.rootq(q);
-        if (!root) {
-            return undefined;
+    if(found){
+        if ( Object.keys(found).some(key => key == "sub_q")) {
+            return found.sub_q;
+        }else{
+            let root = Question.rootq(q);
+            if(root){
+                return Question.find(Number(root.id) + 1);
+            }
         }
-        return Question.find(Number(root.id) + 1);
     }
 }
 
 Question.rootq = q => {
-    //finds root question (with an id) of input Question object
-    let output = q.parent
-    if (!output) {
-        return undefined;
+    //finds root main question (with an id) of input Question object
+    if (q.parent){
+        // return Question.find(Number(q.parent.id));
+        return Question.find(q.parent);
     }
-    let attempt = output.parent;
-    while (attempt !== undefined) {
-        output = attempt;
-        attempt = attempt.parent;
-    }
-    return output;
 }
 
 Question.find = num => {

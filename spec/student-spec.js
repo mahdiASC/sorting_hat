@@ -1,1 +1,1 @@
-inherits from _base
+// inherits from _base

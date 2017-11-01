@@ -30,6 +30,9 @@ class Statistic{
 
         }else if (obj instanceof Cohort){
             focus = obj.class;
+            output["discontent"] = {
+                "avg":avgArray(focus.map(student=>student.scores.find(x=>x.cohort==obj.name).score))
+            }
         }
         //Prop. of race
         output["ethnicity"] = {
@@ -82,44 +85,121 @@ class Statistic{
     visualize_stats(){
     //adds demographic breakdown of cohorts with average, and deviation from mean visually to html doc
     // http://www.chartjs.org/samples/latest/
+        let stats = [
+            "ethnicity",
+            "school_type",
+            "grade",
+            "prev_cs"
+        ];
+
         this.cohort_stats();
         for(let name of Object.keys(this.c_stats)){
-            $("body").append(`<h1>Cohort: ${name}</h1>`);
+            
+            //setting up container
+            let article = $("<article />");
+            $(".statContainer").append(article); //need to make first to
             let c_stat = this.c_stats[name];
-            let stats = [
-                "ethnicity",
-                "school_type",
-                "grade",
-                "prev_cs"
-            ];
+            let cohort = Cohort.find_by_name(name);
+            
+            //title
+            let title = $("<header/>");
+            title.append(`<h2>Cohort Name: ${name}</h2>`);//name of cohort
+            title.append(`<h4>Size: ${cohort.class.length}</h4>`);//class size
+            title.append(`<p>Discontent Rating: ${Math.round(c_stat.discontent.avg)}</h2>`);//happiness of class
+            article.append(title);
 
             for( let stat of stats){
-                $("body").append(`<div class="chart-container" style="position: relative; height:30vh; width:30vw"><canvas id="${name}_${stat}" width:300px height:300px></canvas></div>`);
+                //graph head w/graph
+                let thumbnail = $('<div class="stat_graph"/>');
+                article.append(thumbnail);
+                let thumb_head = $('<div class="thumb_head"/>');
+                thumb_head.append(`<header>${capFirst(stat)}</header>`);
+                thumbnail.append(thumb_head);
+                thumbnail.append(`<div class="chart-container" style="position: relative; height:30vh; width:30vw"><canvas id="${name}_${stat}" width:300px height:300px></canvas></div>`);
                 makeGraph(`${name}_${stat}`, c_stat[stat].avg);
-                // if(stat=="gpa"){
-                //     makeBarGraph(`${name}_${stat}`, Cohort.find_by_name(name).class.map(x=>Number(x.gpa)));
-                // }else{}
+
+                //graph stats
+                let stats_obj = c_stat[stat].avg;
+                let stat_keys = Object.keys(stats_obj).sort((a,b)=>stats_obj[b]-stats_obj[a]);
+                let listo = $("<table/>");
+                let list_head = $(`<tr><th>${capFirst(stat)}</th><th>Percentage(%)</th></tr>`);
+                listo.append(list_head);
+                for(let s = 0; s<stat_keys.length; s++){
+                    let info = stat_keys[s];
+                    let perc = stats_obj[info];
+                    let row = $("<tr/>");
+                    row.append(`<td>${info}</td>`);
+                    row.append(`<td>${(perc*100).toFixed(2)}%</td>`);
+                    listo.append(row);
+                }
+
+                thumbnail.append(listo);
             }
 
-            //giving happiness score
-            // $("body").append(`<p>Average Student Happiness: ${this.scoreHappiness(Cohort.find_by_name(name))}</p>`);
-            //listing students
-            let add_string=`<ol id=${name}_students>`;
-            let c_class = Cohort.find_by_name(name).class;
+            //Student header
+            let student_container = $(`<div id=${name}_students />`);
+            article.append(student_container);
+            let s_title = $("<div/>");
+            s_title.append(`<h2>Student info for ${capFirst(name)}</h2>`);
+            student_container.append(s_title);
+
+            //student list
+            let student_table = $(`<table />`);
+            student_container.append(student_table);
+            let c_class = cohort.class;
+            let s_headers = [
+                "Name",
+                "Ethnicity",
+                "Grade",
+                "School Type",
+                "CS skill?",
+                "Travel Time (min)",
+                "Displeasure"
+            ];
+            function _addHeader(table){
+                //adds s_headers to table element
+                let row = $("<tr/>");
+                for(let i = 0; i<s_headers.length; i++){
+                    row.append(`<th>${s_headers[i]}</th>`);
+                }
+                table.append(row);
+            }
+            _addHeader(student_table);
+
+            function _addRow(table, s_data){
+                //adds s_data to table element
+                let row = $("<tr/>");
+                for(let i = 0; i<s_data.length; i++){
+                    row.append(`<td>${s_data[i]}</td>`);
+                }
+                table.append(row);
+            }
+
             for(let student of c_class){
                 // let travel_time = student.durations.find(x=>x.cohort==student.cohort).duration;
-                let travel_time = student.distances.find(x=>x.cohort==student.cohort).distance; //OMIT (change to duration)
-                add_string +=`<li>${student.name} - Travel time to ${capFirst(student.cohort)}: ~${Math.round(travel_time/60/60,2)} minutes - Grade: ${student.grade}th</li>`;
-            }
-            add_string +=`</ol>`;
-            $("body").append(add_string);
+                let travel = student.distances.find(x=>x.cohort==student.cohort).distance; //OMIT (change to duration)
 
+                let travel_time = Math.round(travel/60/60,2);
+
+                let s_displ = student.scores.find(x=>x.cohort==student.cohort).score;
+
+                let s_data =[
+                    student.name,
+                    student.ethnicity,
+                    student.grade,
+                    student.school_type,
+                    student.prev_cs,
+                    travel_time,
+                    s_displ
+                ];
+                _addRow(student_table, s_data); 
+            }
         }
     }
 
     scoreHappiness(cohort){
         // "happiness" of student's cohort by priority score
-        let score = [];
+        console.log(cohort)
         for(let student of cohort.class){
             let cohort_score_obj = student.scores.find(x=>x.cohort==student.cohort);
             let result = student.scores.indexOf(cohort_score_obj);
