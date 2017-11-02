@@ -78,7 +78,6 @@ describe("Student",function(){
             "trait1":1,
             "trait2":2
         })
-
     })
 
     describe(".selfSort()", function(){

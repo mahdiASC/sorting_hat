@@ -33,11 +33,8 @@ class Student extends _base {
         } else {
             //traverses question links to get final stats (shouldn't change)
             //questions taken in order (starts with s + ##)
-            // let re = new RegExp("s[0-9]+");
-            // let total = Object.keys(this).filter(key=>re.test(this[key])).length;
             let q = Question.first();
             let i = 1;
-            // for (let i = 1; i<total; i++){
             while (q) {
                 let result = q.outcome(this[`s${i}`]);
                 if (!this._s) {

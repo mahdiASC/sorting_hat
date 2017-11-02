@@ -135,7 +135,7 @@ describe('Question',()=>{
         ]
     }
     
-    beforeEach(()=>{
+    afterEach(function(){
         delete question.all;
     });
 
