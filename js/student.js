@@ -1,3 +1,10 @@
+// Export node module.
+if ( typeof module !== 'undefined' )
+{
+    var _base = require("../js/base.js");
+    var Question = require("../js/question.js");
+}
+
 class Student extends _base {
 
     constructor(params) {
@@ -71,4 +78,10 @@ Student.createFromJSON = function (json_obj) {
     for (let i of json_obj) {
         new this(i);
     }
+}
+
+// Export node module.
+if ( typeof module !== 'undefined' && module.hasOwnProperty('exports') )
+{
+    module.exports = Student;
 }
