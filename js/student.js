@@ -75,9 +75,11 @@ Student.fullSort = function () {
 
 Student.createFromJSON = function (json_obj) {
     // let self = this;
+    let output = [];
     for (let i of json_obj) {
-        new this(i);
+        output.push(new this(i));
     }
+    return output;
 }
 
 // Export node module.
