@@ -256,26 +256,255 @@ describe('Question',()=>{
         });
     })
     describe('.rootq()',()=>{
-        let sub_q1 = new question(sub_q1_obj);
-        let sub_q2 = new question(sub_q2_obj);
-        sub_q2.parent = 1;
         it('returns the .parent question',()=>{
-            expect(sub_q1)
-
+            let data_small = new question(data_small_obj);
+            let sub_q2 = new question(sub_q2_obj);
+            sub_q2.parent = 1;
+            expect(question.rootq(sub_q2)).toBe(data_small);
         });        
     })
     describe('.find()',()=>{
-        it('',()=>{
-
+        it('returns the question with and .id of a given number',()=>{
+            let data_small = new question(data_small_obj);
+            expect(question.find(1)).toBe(data_small);
         });
     })
     describe('.createFromJSON()',()=>{
-        it('should properly create a Question object from one JSON',()=>{
-
+        it('should properly create a Question object from JSON input',()=>{
+            let json_data = {
+                "0": data_small_obj
+            };
+            let json_q = question.createFromJSON(json_data);
+            expect(json_q instanceof question).toBeTruthy();
         });
         
-        it('should properly create multiple Question objects from a JSON with multiple objects',()=>{
-            
+        it('should properly return array of Question objects from a JSON with multiple objects',()=>{
+            let huge_data = {
+                "0":{
+                    "id": 1,
+                    "text": "Question1?",
+                    "answers": [
+                        {
+                            "text": "c1",
+                            "outcome": {
+                                "trait1": 2,
+                                "trait2": 1
+                            },
+                            "sub_q": {
+                                "text": "SubQuestion1.1?",
+                                "answers": [
+                                    {
+                                        "text": "c1",
+                                        "outcome": {
+                                            "trait1": 2,
+                                            "trait2": 1
+                                        }
+                                    },
+                                    {
+                                        "text": "c2",
+                                        "outcome": {
+                                            "trait1": 1,
+                                            "trait2": 2
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "text": "c2",
+                            "outcome": {
+                                "trait1": 1,
+                                "trait2": 2
+                            },
+                            "sub_q": {
+                                "text": "SubQuestion1.2?",
+                                "answers": [
+                                    {
+                                        "text": "c1",
+                                        "outcome": {
+                                            "trait1": 1,
+                                            "trait2": 2
+                                        }
+                                    },
+                                    {
+                                        "text": "c2",
+                                        "outcome": {
+                                            "trait1": 2,
+                                            "trait2": 1
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "text": "c3",
+                            "outcome": {
+                                "trait3": 2,
+                                "trait4": 1
+                            },
+                            "sub_q": {
+                                "text": "SubQuestion1.3?",
+                                "answers": [
+                                    {
+                                        "text": "c1",
+                                        "outcome": {
+                                            "trait3": 2,
+                                            "trait4": 1
+                                        }
+                                    },
+                                    {
+                                        "text": "c2",
+                                        "outcome": {
+                                            "trait4": 1,
+                                            "trait3": 2
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "text": "c4",
+                            "outcome": {
+                                "trait4": 2,
+                                "trait3": 1
+                            },
+                            "sub_q": {
+                                "text": "SubQuestion1.4?",
+                                "answers": [
+                                    {
+                                        "text": "c1",
+                                        "outcome": {
+                                            "trait4": 2,
+                                            "trait3": 1
+                                        }
+                                    },
+                                    {
+                                        "text": "c2",
+                                        "outcome": {
+                                            "trait3": 1,
+                                            "trait4": 2
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "1":{
+                    "id": 2,
+                    "text": "Question2?",
+                    "answers": [
+                        {
+                            "text": "c1",
+                            "outcome": {
+                                "trait1": 2,
+                                "trait2": 1
+                            },
+                            "sub_q": {
+                                "text": "SubQuestion1.1?",
+                                "answers": [
+                                    {
+                                        "text": "c1",
+                                        "outcome": {
+                                            "trait1": 2,
+                                            "trait2": 1
+                                        }
+                                    },
+                                    {
+                                        "text": "c2",
+                                        "outcome": {
+                                            "trait1": 1,
+                                            "trait2": 2
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "text": "c2",
+                            "outcome": {
+                                "trait1": 1,
+                                "trait2": 2
+                            },
+                            "sub_q": {
+                                "text": "SubQuestion1.2?",
+                                "answers": [
+                                    {
+                                        "text": "c1",
+                                        "outcome": {
+                                            "trait1": 1,
+                                            "trait2": 2
+                                        }
+                                    },
+                                    {
+                                        "text": "c2",
+                                        "outcome": {
+                                            "trait1": 2,
+                                            "trait2": 1
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "text": "c3",
+                            "outcome": {
+                                "trait3": 2,
+                                "trait4": 1
+                            },
+                            "sub_q": {
+                                "text": "SubQuestion1.3?",
+                                "answers": [
+                                    {
+                                        "text": "c1",
+                                        "outcome": {
+                                            "trait3": 2,
+                                            "trait4": 1
+                                        }
+                                    },
+                                    {
+                                        "text": "c2",
+                                        "outcome": {
+                                            "trait4": 1,
+                                            "trait3": 2
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "text": "c4",
+                            "outcome": {
+                                "trait4": 2,
+                                "trait3": 1
+                            },
+                            "sub_q": {
+                                "text": "SubQuestion1.4?",
+                                "answers": [
+                                    {
+                                        "text": "c1",
+                                        "outcome": {
+                                            "trait4": 2,
+                                            "trait3": 1
+                                        }
+                                    },
+                                    {
+                                        "text": "c2",
+                                        "outcome": {
+                                            "trait3": 1,
+                                            "trait4": 2
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+
+            let huge_q = question.createFromJSON(huge_data);
+            expect(Array.isArray(huge_q)).toBeTruthy();
+            expect(huge_q.length).toEqual(2);
         });
     })
 })

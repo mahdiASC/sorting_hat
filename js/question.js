@@ -75,10 +75,13 @@ Question.createFromJSON = function (obj) {
         });
         return q;
     } else {
+        let output = [];
         //multiple questions
         for (let i of Object.keys(obj)) {
-            Question.createFromJSON(obj[i]);
+            output.push(Question.createFromJSON(obj[i]));
         }
+
+        return output.length>1 ? output : output[0];
     }
 }
 
