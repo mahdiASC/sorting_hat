@@ -1,8 +1,7 @@
-let question = require("../js/question.js");
 describe('Question',()=>{
     let data_small_obj = {
         "id":1,
-        "text": "test question",
+        "text": "test Question",
         "answers": [
             {
                 "text": "c1",
@@ -135,25 +134,25 @@ describe('Question',()=>{
         ]
     }
     
-    afterEach(function(){
-        delete question.all;
+    beforeEach(function(){
+        delete Question.all;
     });
 
     describe('constructor()',()=>{
         it('should create .all class property as an array of newly made objects',()=>{
-           expect(question.all).toBeUndefined();
-           let small_data = new question(data_small_obj);
-           expect(question.all).toBeDefined();
-           expect(question.all[0]).toBe(small_data);
+           expect(Question.all).toBeUndefined();
+           let small_data = new Question(data_small_obj);
+           expect(Array.isArray(Question.all)).toBeTruthy();
+           expect(Question.all[0]).toBe(small_data);
         });
     
-        it('should create subquestions',()=>{
-            let data_large = new question(data_large_obj);
-            expect(question.all.length).toBe(5);
+        it('should create subQuestions',()=>{
+            let data_large = new Question(data_large_obj);
+            expect(Question.all.length).toBe(5);
         });
     
-        it('should set subquestion .parent as main question id',()=>{
-            let data_large = new question(data_large_obj);
+        it('should set subQuestion .parent as main Question id',()=>{
+            let data_large = new Question(data_large_obj);
             let num = data_large.id;
             expect(data_large.answers.every(x=>{
                 if(x.sub_q){
@@ -167,7 +166,7 @@ describe('Question',()=>{
 
     describe('.outcome()',()=>{
         it('given a choice string as input, will return object traits outcome',()=>{
-            let data_small = new question(data_small_obj);
+            let data_small = new Question(data_small_obj);
             expect(data_small.outcome('c1')).toEqual({
                 "trait1": 2,
                 "trait2": 1
@@ -176,7 +175,7 @@ describe('Question',()=>{
     })
 
     describe('.first()',()=>{
-        it('returns first question with id==1',()=>{
+        it('returns first Question with id==1',()=>{
             let data_small_second_obj = {
                 "id":2,
                 "text": "blah",
@@ -197,10 +196,10 @@ describe('Question',()=>{
                     }
                 ]
             }
-            let data_small = new question(data_small_obj);
-            let data_small_second = new question(data_small_second_obj);
+            let data_small = new Question(data_small_obj);
+            let data_small_second = new Question(data_small_second_obj);
 
-            expect(question.first()).toEqual(data_small);
+            expect(Question.first()).toEqual(data_small);
         });
     })
     
@@ -211,10 +210,10 @@ describe('Question',()=>{
         let sub_q1;
         let sub_q2;
         beforeEach(()=>{
-            data_large = new question(data_large_obj);
+            data_large = new Question(data_large_obj);
             data_small_next_obj = {
                 "id":2,
-                "text": "test question",
+                "text": "test Question",
                 "answers": [
                     {
                         "text": "c1",
@@ -232,41 +231,41 @@ describe('Question',()=>{
                     }
                 ]
             }
-            data_small_next = new question(data_small_next_obj);
-            sub_q1 = new question(sub_q1_obj);
-            sub_q2 = new question(sub_q2_obj);
+            data_small_next = new Question(data_small_next_obj);
+            sub_q1 = new Question(sub_q1_obj);
+            sub_q2 = new Question(sub_q2_obj);
             sub_q1.parent = 1;
             sub_q2.parent = 1;
         });
 
-        it('should properly return the next subquestion based on choice',()=>{
-            expect(question.next(data_large,'c1').text).toBe("SubQuestion1.1?");
-            expect(question.next(data_large,'c2').text).toBe("SubQuestion1.2?");
+        it('should properly return the next subQuestion based on choice',()=>{
+            expect(Question.next(data_large,'c1').text).toBe("SubQuestion1.1?");
+            expect(Question.next(data_large,'c2').text).toBe("SubQuestion1.2?");
         });
 
-        it('should properly return the next main question once a subquestion is answered',()=>{
-            expect(question.next(sub_q1,'c1').text).toBe('test question');
-            expect(question.next(sub_q1,'c2').text).toBe('test question');
-            expect(question.next(sub_q2,'c1').text).toBe('test question');
-            expect(question.next(sub_q2,'c2').text).toBe('test question');
+        it('should properly return the next main Question once a subQuestion is answered',()=>{
+            expect(Question.next(sub_q1,'c1').text).toBe('test Question');
+            expect(Question.next(sub_q1,'c2').text).toBe('test Question');
+            expect(Question.next(sub_q2,'c1').text).toBe('test Question');
+            expect(Question.next(sub_q2,'c2').text).toBe('test Question');
         });
         
-        it('should properly return undefined if there is no next main question',()=>{
-            expect(question.next(data_small_next_obj)).toBeUndefined();
+        it('should properly return undefined if there is no next main Question',()=>{
+            expect(Question.next(data_small_next_obj)).toBeUndefined();
         });
     })
     describe('.rootq()',()=>{
-        it('returns the .parent question',()=>{
-            let data_small = new question(data_small_obj);
-            let sub_q2 = new question(sub_q2_obj);
+        it('returns the .parent Question',()=>{
+            let data_small = new Question(data_small_obj);
+            let sub_q2 = new Question(sub_q2_obj);
             sub_q2.parent = 1;
-            expect(question.rootq(sub_q2)).toBe(data_small);
+            expect(Question.rootq(sub_q2)).toBe(data_small);
         });        
     })
     describe('.find()',()=>{
-        it('returns the question with and .id of a given number',()=>{
-            let data_small = new question(data_small_obj);
-            expect(question.find(1)).toBe(data_small);
+        it('returns the Question with and .id of a given number',()=>{
+            let data_small = new Question(data_small_obj);
+            expect(Question.find(1)).toBe(data_small);
         });
     })
     describe('.createFromJSON()',()=>{
@@ -274,8 +273,8 @@ describe('Question',()=>{
             let json_data = {
                 "0": data_small_obj
             };
-            let json_q = question.createFromJSON(json_data);
-            expect(json_q instanceof question).toBeTruthy();
+            let json_q = Question.createFromJSON(json_data);
+            expect(json_q instanceof Question).toBeTruthy();
         });
         
         it('should properly return array of Question objects from a JSON with multiple objects',()=>{
@@ -502,7 +501,7 @@ describe('Question',()=>{
                 }
             }
 
-            let huge_q = question.createFromJSON(huge_data);
+            let huge_q = Question.createFromJSON(huge_data);
             expect(Array.isArray(huge_q)).toBeTruthy();
             expect(huge_q.length).toEqual(2);
         });

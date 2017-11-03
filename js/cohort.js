@@ -186,5 +186,3 @@ var makeTextFile = function (text) {
     // returns a URL you can use as a href
     return textFile;
 };
-
-

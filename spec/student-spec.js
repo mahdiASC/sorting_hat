@@ -1,6 +1,3 @@
-// inherits from _base
-let Student = require("../js/student.js");
-let Question = require("../js/question.js");
 describe("Student",function(){
     let student1;
 

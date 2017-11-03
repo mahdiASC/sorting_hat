@@ -1,6 +1,3 @@
-let _base = require('../js/base.js');
-let Papa = require('../js/papaparse.js');
-
 describe('_base',()=>{
     afterEach(()=>{
         delete _base.all;
@@ -37,7 +34,9 @@ describe('_base',()=>{
             "in":"here"
         }
         let testBase = new _base(params);
-        expect(testBase).toEqual(params);
+        expect(testBase.something).toEqual(params.something);
+        expect(testBase.amazing).toEqual(params.amazing);
+        expect(testBase.in).toEqual(params.in);
     })
 
     //can't test createFromCSVString

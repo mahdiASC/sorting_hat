@@ -84,9 +84,3 @@ Question.createFromJSON = function (obj) {
         return output.length>1 ? output : output[0];
     }
 }
-
-// Export node module.
-if ( typeof module !== 'undefined' && module.hasOwnProperty('exports') )
-{
-    module.exports = Question;
-}

@@ -85,7 +85,6 @@ function setup() {
     //Filtering out white applicants to threshold
 
     //CODE THIS!
-
     y = new Sort();
 
     x = new Statistic();

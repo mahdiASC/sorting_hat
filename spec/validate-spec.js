@@ -1,6 +1,4 @@
-let validate = require("../js/validate.js");
-
-describe("validate", ()=>{
+describe("Validate", ()=>{
     let myValidate,student1,student2,student3,cohort1,cohort2;
     
     beforeEach(()=>{
@@ -17,7 +15,7 @@ describe("validate", ()=>{
             "class":[student3]
         }
         
-        myValidate = new validate(
+        myValidate = new Validate(
             [cohort1,cohort2],
             [student1,student2,student3]
         );
@@ -46,7 +44,7 @@ describe("validate", ()=>{
                 "class":[student3,student1]
             }
             
-            let tempVal = new validate(
+            let tempVal = new Validate(
                 [cohort1,cohort2],
                 [student1,student2,student3]
             );
@@ -69,15 +67,12 @@ describe("validate", ()=>{
                 "class":[student3,student1]
             }
             
-            let tempVal = new validate(
+            let tempVal = new Validate(
                 [cohort1,cohort2],
                 [student1,student2,student3]
             );
 
             expect(tempVal.getDups()).toEqual([student1]);
-        })
-        it("",()=>{
-            
         })
     })
 });

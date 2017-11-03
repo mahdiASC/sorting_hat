@@ -38,9 +38,3 @@ class Validate{
         return output;
     }
 }
-
-// Export node module.
-if ( typeof module !== 'undefined' && module.hasOwnProperty('exports') )
-{
-    module.exports = Validate;
-}

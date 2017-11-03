@@ -1,9 +1,3 @@
-// Export node module.
-if ( typeof module !== 'undefined')
-{
-    var Papa = require('../js/papaparse.js');
-}
-
 class _base {
     //handles basic initialization and ALL storage for each
     //extended class
@@ -37,10 +31,4 @@ _parseObjects = function (header, arr) {
         output[header[x]] = arr[x];
     }
     new this(output);
-}
-
-// Export node module.
-if ( typeof module !== 'undefined' && module.hasOwnProperty('exports') )
-{
-    module.exports = _base;
 }

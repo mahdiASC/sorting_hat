@@ -1,5 +1,3 @@
-let Priority = require("../js/priority.js");
-
 describe("Priority",function(){
     let func;
     let test_priority

@@ -1,9 +1,3 @@
-// Export node module.
-if ( typeof module !== 'undefined')
-{
-    var capFirst = require("../js/mahdi.js");
-}
-
 class Priority{
     constructor(str, func){
         this.priority=str;
@@ -202,10 +196,3 @@ new Priority(
             }
         })
     });
-
-
-// Export node module.
-if ( typeof module !== 'undefined' && module.hasOwnProperty('exports') )
-{
-    module.exports = Priority;
-}
