@@ -311,3 +311,9 @@ function removeArrayItem(arr, item) {
 // Array.prototype.copy = function() {
 //     return  this.map(x=>x);
 // };
+
+// Export node module.
+if ( typeof module !== 'undefined' && module.hasOwnProperty('exports') )
+{
+    module.exports = capFirst;
+}

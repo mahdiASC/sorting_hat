@@ -1,3 +1,9 @@
+// Export node module.
+if ( typeof module !== 'undefined')
+{
+    var capFirst = require("../js/mahdi.js");
+}
+
 class Priority{
     constructor(str, func){
         this.priority=str;
@@ -7,7 +13,7 @@ class Priority{
         this.constructor.all.push(this);
         this.call_func=()=>{
             console.log(`Sorting by ${capFirst(this.priority)}...`);
-            func.bind(this)()
+            return func.bind(this)();
         };
     }
 
