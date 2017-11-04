@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div id="page-wrapper">
+        
+        <h1>Input files for sorting</h1>
+        <h3>NOTE: the following files require a unique setup beforehand</h3>
+        <div>
+            <label for="cohort_file">Select a Cohort file (CSV):</label>
+            <br>
+            <input type="file" id="cohort_file" class="hidden"/>
+        </div>
+        <div>
+            <label for="question_file">Select a Question file (JSON):</label>
+            <br>
+            <input type="file" id="question_file" class="hidden"/>
+        </div>
+        <div>
+            <label for="student_file">Select a Student file (CSV or JSON):</label>
+            <br>
+            <input type="file" id="student_file" class="hidden"/>
+        </div>
+        <button onclick="myFunc()">Submit</button>
+    </div>
+
+                <!-- p5  -->
+    <script src="./js/p5.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.14/p5.js"></script> -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.14/addons/p5.dom.js"></script>     -->
+    
+    <script src="./js/jquery.min.js"></script>
+    
+    <!-- papaparse -->
+    <script src="./js/papaparse.js"></script>
+    
+    <!-- chart.js cdn -->
+    <script src="./js/chart.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.0/Chart.min.js"></script> -->
+    
+    <!-- custom scripts -->
+    <script src="./js/mahdi.js"></script>
+    
+    <script src="./js/base.js"></script>
+    <script src="./js/student.js"></script>
+    <script src="./js/cohort.js"></script>
+    <script src="./js/question.js"></script>
+    <script src="./js/sort.js"></script>
+    <script src="./js/statistic.js"></script>
+    <script src="./js/timer.js"></script>
+    <script src="./js/priority.js"></script>
+    <script src="./js/validate.js"></script>
+    
+    <script>
+        let useStudentJSON = true;
+let api_key = 'AIzaSyDlA_pTF7IbYhUehFHwmZZZW9Cs9GbVGS8';
+let secDelay = 1;//delay in seconds for api call
+let splice_number = 100; //number of students per API call (max 100)
+let max_travel_time = 1; //in hours
+let white_threshold = .03; //percentage of applicants we will consider - randomly removed up to this percent
+let minority_rate = 0.8; //the percentage of brown students per cohort (this is rounded down by minority_leeway students as a minimum)
+let minority_leeway = 2; //# of students that lowers the bar for minority_rate 
+let grade_leeway = 2; //# of students that lowers the bar for grade level disparity (between 10th and 11th);
+// TURN INTO TIME NOT DISTANCE (under 1 hour time)
+
+// ARE WE EXCLUDING WHITE APPLICANTS, PERIOD?
+let priorities = [
+    "score"
+    ,
+    "duration"
+    ,
+    "ethnicity"
+    ,
+    "grade"
+]
+
+let graph_colors = [
+    "rgba(80,193,233,0.75)",
+    "rgba(162,133,220,0.75)",
+    "rgba(157,208,82,0.75)",
+    "rgba(235,171,36,0.75)",
+    "rgba(234,93,79,0.75)",
+    "rgba(60,62,66,0.75)",
+    "rgba(235,55,55,0.75)",
+    "rgba(200,222,235,0.75)"
+]
+
+
+// let max_seconds = max_travel_time *3600;
+let max_seconds = 1936026; //OMIT THIS (just for testing)
+let priority_list = priorities.map(x=>Priority.find_by_name(x));
+var store_file = function(file, func){
+    //helper method for making ajax request on local files
+    let re = new RegExp(".csv");
+    let _type = re.exec(file) ? "text" : "json";
+    $.get({
+        url: file,
+        async: false,
+        dataType: _type,
+        success: func
+    });
+}
+
+var c_file;
+var q_file;
+var s_file;
+var c_reader;
+var data
+myFunc = function(){
+
+    let file_ids = [
+        "cohort_file",
+        "question_file",
+        "student_file"
+    ]
+    
+    let urls = [
+        "./data/cohorts.csv",
+        "./data/questions.json",
+        "./data/students.csv",
+        "./data/students.json"
+    ];
+    
+    for(let i =0 ; i<file_ids.length; i++){
+        let file = document.getElementById(file_ids[i]).files[0];
+        if(file){
+            //path of loading user's file
+            let reader = new FileReader();
+            reader.onload = function(e){
+                if(file_ids[i]=="student_file"){
+                    let j_re = new RegExp(".json");
+                    let c_re = new RegExp(".csv");
+                    if (j_re.exec(file.name)) {
+                        Student.createFromJSON(JSON.parse(reader.result));
+                    }else if(c_re.exec(file.name)){
+                        Student.createFromCSVString(reader.result);
+                    }else{
+                        throw new Error("File error!");
+                    }
+                }else if(file_ids[i]=="question_file"){
+                    Question.createFromJSON(JSON.parse(reader.result));
+                }else if(file_ids[i]=="cohort_file"){
+                    Cohort.createFromCSVString(reader.result);
+                }else{
+                    throw new Error("File error!");
+                }     
+            }
+            reader.readAsText(file);
+        }else{
+            //path of loading default file
+            if(file_ids[i]=="student_file"){
+                let url;
+                if (useStudentJSON) {
+                     url = urls[i+1];
+                     store_file(url,x => Student.createFromJSON(x));
+                }else{
+                    url = urls[i];
+                    store_file(url,x => Student.createFromCSVString(x));
+                }
+            }else if(file_ids[i]=="question_file"){
+                store_file(urls[i],x => Question.createFromJSON(x));
+            }else if(file_ids[i]=="cohort_file"){
+                store_file(urls[i],x => Cohort.createFromCSVString(x));
+            }else{
+                throw new Error("File error!");
+            }
+        }
+    }
+    
+}
+    </script>
+    <script>
+        // Annoying CORS
+// https://chrome.google.com/webstore/detail/allow-control-allow-origi/nlfbmbojpeacfghkpbjhddihlkkiljbi
+// NOTE: csv need "+" as delimiter
+
+
+
+    //loading data into files
+    // store_file(urls[0],x => Cohort.createFromCSVString(x));
+    // store_file("../cohorts.csv",x => Cohort.createFromCSVString(x));
+    // store_file(urls[1],x => Question.createFromJSON(x));
+    // store_file("../questions.json",x => Question.createFromJSON(x));
+    //loading students as JSON (from previous load)
+    // if (useStudentJSON) {
+    //     store_file(urls[3],x => Student.createFromJSON(x));
+        // store_file("../students.json",x => Student.createFromJSON(x));
+    // } else {
+    //     store_file(urls[2],x => Student.createFromCSVString(x));
+        // store_file("../students.csv",x => Student.createFromCSVString(x));
+    // }
+
+    //Filtering out white applicants to threshold
+
+    //CODE THIS!
+
+    </script>
+</body>
+</html>

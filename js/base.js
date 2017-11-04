@@ -14,15 +14,17 @@ class _base {
 
 _base.createFromCSVString = function (fileString) {
     let self = this;
-    return Papa.parse(fileString, {
+    let output = [];
+    Papa.parse(fileString, {
         delimiter: "+",
         complete: function (results) {
             let header = results.data[0];
             for (let i = 1; i < results.data.length; i++) {
-                _parseObjects.apply(self, [header, results.data[i]]);
+                output.push(_parseObjects.apply(self, [header, results.data[i]]));
             }
         }
     });
+    return output;
 }
 
 _parseObjects = function (header, arr) {
@@ -30,5 +32,5 @@ _parseObjects = function (header, arr) {
     for (let x in header) {
         output[header[x]] = arr[x];
     }
-    new this(output);
+    return new this(output);
 }
