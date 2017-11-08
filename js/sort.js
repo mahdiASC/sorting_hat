@@ -10,7 +10,8 @@ class Sort {
 
     constructor() {
         this.cohorts = Cohort.all.map(x=>x); //making copy
-        this.students = Student.all.map(x=>x);
+        Student.all = Student.all.filter(x=>x.ethnicity!="White"); //filtering out whites
+        this.students = Student.all.map(x=>x)
         if(!useStudentJSON){
             Cohort.assessStudents();
         }
@@ -19,7 +20,7 @@ class Sort {
     }
 
     fillRosters() {
-        //fills cohorts based on threshold restricitons and student priorities
+        // fills cohorts based on threshold restricitons and student priorities
         // for any remaining cohorts, waitlists are assessed and filled by student priorities only
 
         // if not enough student, returns error
@@ -27,8 +28,7 @@ class Sort {
             throw new Error(`Number of students (${this.students.length}) insufficient to fill cohorts${this.cohorts.reduce((sum,val)=>sum+Number(val.capacity),0)}`);
         }
 
-        //loops down the priority list diminishing each successive round until only 
-
+        // loops down the priority list diminishing each successive round until only 
         let temp_list = priority_list.map(x=>x);
 
         while(temp_list.length>0){

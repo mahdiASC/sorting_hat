@@ -82,3 +82,16 @@ table {
     display: table-cell;
   }
 
+  table th:hover {
+    background-color: #ff00ff;
+    color: #fff;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  .selected {
+    background-color: #ff00ff;
+    color: #fff;
+    font-weight: bold;
+  }
+  .asc:after {  content: "\25B2"; }
+  .desc:after { content: "\25BC"; }

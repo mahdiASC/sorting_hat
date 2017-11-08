@@ -5,9 +5,9 @@ class Priority{
             this.constructor.all = []
         }
         this.constructor.all.push(this);
-        this.call_func=()=>{
+        this.call_func=x=>{
             console.log(`Sorting by ${capFirst(this.priority)}...`);
-            return func.bind(this)();
+            return func.bind(this)(x);
         };
     }
 

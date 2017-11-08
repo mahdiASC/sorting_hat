@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,39 +9,40 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/file_load.css">
 </head>
+
 <body>
 
-        <div id="page-wrapper">
-                
-                <h1>Input files for sorting</h1>
-                <h3>NOTE: the following files require a unique setup beforehand</h3>
-                <div class="fileUpload btn btn-primary">
-                    <span>Select a Cohort file (CSV):
-                        <br>
-                        <span class="file_text"> Default: 'cohort.csv'</span>
-                    </span>
-                    <input type="file" id="cohort_file" class="upload" />
-                </div>
-        
-        
-                <div class="fileUpload btn btn-primary">
-                    <span>Select a Question file (JSON):
-                        <br>
-                        <span class="file_text"> Default: 'question.json'</span>
-                    </span>
-                    <input type="file" id="question_file" class="upload" />
-                </div>
-        
-                <div class="fileUpload btn btn-primary">
-                    <span>Select a Student file (CSV or JSON):
-                        <br>
-                        <span class="file_text"> Default: 'student.json'</span>
-                    </span>
-                    <input type="file" id="student_file" class="upload" />
-                </div>
-        
-                <button onclick="myFunc()">Submit</button>
-            </div>
+    <div id="page-wrapper">
+
+        <h1>Input files for sorting</h1>
+        <h3>NOTE: the following files require a unique setup beforehand</h3>
+        <div class="fileUpload btn btn-primary">
+            <span>Select a Cohort file (CSV):
+                <br>
+                <span class="file_text"> Default: 'cohort.csv'</span>
+            </span>
+            <input type="file" id="cohort_file" class="upload" />
+        </div>
+
+
+        <div class="fileUpload btn btn-primary">
+            <span>Select a Question file (JSON):
+                <br>
+                <span class="file_text"> Default: 'question.json'</span>
+            </span>
+            <input type="file" id="question_file" class="upload" />
+        </div>
+
+        <div class="fileUpload btn btn-primary">
+            <span>Select a Student file (CSV or JSON):
+                <br>
+                <span class="file_text"> Default: 'student.json'</span>
+            </span>
+            <input type="file" id="student_file" class="upload" />
+        </div>
+
+        <button onclick="myFunc()">Submit</button>
+    </div>
     <div class="mainContainer">
         <div class="top">
             <h1>ASC 2018 Cohort Sorting Hat Results</h1>
@@ -49,23 +51,24 @@
             <!-- Will be populated by cohort stats -->
         </div>
     </div>
+
+    <!-- /////// -->
+    <!-- SCRIPTS -->
+    <!-- /////// -->
     <!-- p5  -->
-    <script src="./js/p5.js"></script>
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.14/p5.js"></script> -->
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.14/addons/p5.dom.js"></script>     -->
-    
+    <!-- <script src="./js/p5.js"></script> -->
+
     <script src="./js/jquery.min.js"></script>
-    
+
     <!-- papaparse -->
     <script src="./js/papaparse.js"></script>
-    
+
     <!-- chart.js cdn -->
     <script src="./js/chart.js"></script>
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.0/Chart.min.js"></script> -->
-    
+
     <!-- custom scripts -->
     <script src="./js/mahdi.js"></script>
-    
+
     <script src="./js/base.js"></script>
     <script src="./js/student.js"></script>
     <script src="./js/cohort.js"></script>
@@ -75,8 +78,10 @@
     <script src="./js/timer.js"></script>
     <script src="./js/priority.js"></script>
     <script src="./js/validate.js"></script>
-    
+
+    <script src="./config.js"></script>
     <script src="./js/main.js"></script>
     <script src="./js/file_load.js"></script>
 </body>
+
 </html>

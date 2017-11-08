@@ -1,15 +1,11 @@
-// document.getElementById("uploadBtn").onchange = function () {
-//     document.getElementById("uploadFile").value = this.value;
-// };
-
-$("div.fileUpload").each(function(x){
+$("div.fileUpload").each(function (x) {
     let main = $(this);
     let text = $(main.find(".file_text"));
     let input = $(main.find("input"));
     input.change(function () {
         console.log($(this));
-            text.text(this.value);
-        });
+        text.text(this.value);
+    });
 })
 
 let myFunc = function () {
@@ -76,13 +72,4 @@ let myFunc = function () {
     $("#page-wrapper").hide();
     $(".mainContainer").show();
     startSort();
-}
-
-
-let x,y,z;
-
-function startSort(){
-    y = new Sort();
-    x = new Statistic();
-    x.visualize_stats()
 }
