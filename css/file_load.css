@@ -89,3 +89,7 @@ body{
 .file_text{
     color:rgb(80,193,233);
 }
+
+.mainContainer{
+  display: none;
+}

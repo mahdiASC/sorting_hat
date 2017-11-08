@@ -63,34 +63,3 @@ var store_file = function(file, func){
         success: func
     });
 }
-
-let x,y,z;
-
-function setup() {
-    noCanvas();
-    //loading data into files
-    store_file(urls[0],x => Cohort.createFromCSVString(x));
-    // store_file("../cohorts.csv",x => Cohort.createFromCSVString(x));
-    store_file(urls[1],x => Question.createFromJSON(x));
-    // store_file("../questions.json",x => Question.createFromJSON(x));
-    //loading students as JSON (from previous load)
-    if (useStudentJSON) {
-        store_file(urls[3],x => Student.createFromJSON(x));
-        // store_file("../students.json",x => Student.createFromJSON(x));
-    } else {
-        store_file(urls[2],x => Student.createFromCSVString(x));
-        // store_file("../students.csv",x => Student.createFromCSVString(x));
-    }
-
-    //Filtering out white applicants to threshold
-
-    //CODE THIS!
-    y = new Sort();
-
-    x = new Statistic();
-    x.visualize_stats()
-    //verify no students belong to multiple cohorts
-    // z = new Validate();
-    // z.main();
-}
-

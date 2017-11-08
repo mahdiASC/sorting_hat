@@ -73,4 +73,16 @@ let myFunc = function () {
         }
     }
 
+    $("#page-wrapper").hide();
+    $(".mainContainer").show();
+    startSort();
+}
+
+
+let x,y,z;
+
+function startSort(){
+    y = new Sort();
+    x = new Statistic();
+    x.visualize_stats()
 }

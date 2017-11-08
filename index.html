@@ -6,8 +6,41 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Sorting Hat</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/file_load.css">
 </head>
 <body>
+
+        <div id="page-wrapper">
+                
+                <h1>Input files for sorting</h1>
+                <h3>NOTE: the following files require a unique setup beforehand</h3>
+                <div class="fileUpload btn btn-primary">
+                    <span>Select a Cohort file (CSV):
+                        <br>
+                        <span class="file_text"> Default: 'cohort.csv'</span>
+                    </span>
+                    <input type="file" id="cohort_file" class="upload" />
+                </div>
+        
+        
+                <div class="fileUpload btn btn-primary">
+                    <span>Select a Question file (JSON):
+                        <br>
+                        <span class="file_text"> Default: 'question.json'</span>
+                    </span>
+                    <input type="file" id="question_file" class="upload" />
+                </div>
+        
+                <div class="fileUpload btn btn-primary">
+                    <span>Select a Student file (CSV or JSON):
+                        <br>
+                        <span class="file_text"> Default: 'student.json'</span>
+                    </span>
+                    <input type="file" id="student_file" class="upload" />
+                </div>
+        
+                <button onclick="myFunc()">Submit</button>
+            </div>
     <div class="mainContainer">
         <div class="top">
             <h1>ASC 2018 Cohort Sorting Hat Results</h1>
@@ -44,5 +77,6 @@
     <script src="./js/validate.js"></script>
     
     <script src="./js/main.js"></script>
+    <script src="./js/file_load.js"></script>
 </body>
 </html>
