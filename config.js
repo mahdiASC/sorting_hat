@@ -1,6 +1,6 @@
 // Annoying CORS
 // https://chrome.google.com/webstore/detail/allow-control-allow-origi/nlfbmbojpeacfghkpbjhddihlkkiljbi
-// NOTE: csv need "+" as delimiter
+// NOTE: csv need "/u0009" (tab) as delimiter
 
 ///////////////
 // VARIABLES //
@@ -11,7 +11,8 @@ let minority_rate = 0.8; //the percentage of brown students per cohort (this is 
 let minority_leeway = 2; //# of students that lowers the bar for minority_rate 
 let grade_leeway = 2; //# of students that lowers the bar for grade level disparity (between 10th and 11th);
 let white_threshold = 0; //percentage of white applicants we will consider
-let useStudentJSON = true;
+let rec_bonus = 0; //percentage reduction in discontent deviation for students who come recommended
+let useStudentJSON = true; //if false, will allos download of student JSON file
 
 /////////
 // API //

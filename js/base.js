@@ -1,3 +1,5 @@
+let myChar = "/u0009";
+
 class _base {
     //handles basic initialization and ALL storage for each
     //extended class
@@ -16,7 +18,7 @@ _base.createFromCSVString = function (fileString) {
     let self = this;
     let output = [];
     Papa.parse(fileString, {
-        delimiter: "+",
+        delimiter: myChar,
         complete: function (results) {
             let header = results.data[0];
             for (let i = 1; i < results.data.length; i++) {

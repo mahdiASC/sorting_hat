@@ -1,5 +1,7 @@
+let myChar = "/u0009"; //tab separating CSV content
 let studentFlag = true;
-let num = 600;
+let s_num = 3;
+let c_num = 1;
 
 let image_names = [
     '1.jpg',
@@ -63,57 +65,64 @@ let ethnicities = {
     'White': 1,
     'Native American': 1,
     'Middle Eastern': 1,
-    'East Asian':3,
+    'East Asian': 3,
     'South Asian': 4,
     'Southeast Asian': 5
 };
 
-function newStudent(){
-    p = [];
-    p.push(randName(2));
-    p.push(randName()+"@gmail.com");
-    p.push(myRandom(locations));
-    p.push(randPhone());
-    p.push(randName(2));
-    p.push(randName()+"@gmail.com");
-    p.push(randPhone());
-    p.push(randProb(ethnicities)); 
-    p.push(myRandom(65,100)); //gpa
-    p.push(Math.random()>.5 ? 11 : 10); //grade
-    p.push(myRandom(["CTE","public","private","charter"]));
-    p.push(Math.random()>.5 ? "yes" : "no");
-    p.push(myRandom(10));
-    p.push(myRandom(10));
-    p.push(myRandom(10));
-    p.push(myRandom(10));
-    p.push(myRandom(10));
-    p.push(myRandom(["c1","c2","c3","c4"]));
-    p.push(myRandom(["c1","c2"]));
-    p.push(myRandom(["c1","c2","c3","c4"]));
-    p.push(myRandom(["c1","c2"]));
-    return p.join("+");
+function newStudent(num) {
+    num = num || 1;
+    for (let i = 0; i < num; i++) {
+        p = [];
+        p.push(randName(2));
+        p.push(randName() + "@gmail.com");
+        p.push(myRandom(locations));
+        p.push(randPhone());
+        p.push(randName(2));
+        p.push(randName() + "@gmail.com");
+        p.push(randPhone());
+        p.push(randProb(ethnicities));
+        p.push(myRandom(65, 100)); //gpa
+        p.push(Math.random() > .5 ? 11 : 10); //grade
+        p.push(myRandom(["CTE", "public", "private", "charter"]));
+        p.push(Math.random() > .5 ? "yes" : "no");
+        p.push(Math.random() > .95 ? "yes" : "no");
+        p.push(myRandom(10));
+        p.push(myRandom(10));
+        p.push(myRandom(10));
+        p.push(myRandom(10));
+        p.push(myRandom(10));
+        p.push(myRandom(["c1", "c2", "c3", "c4"]));
+        p.push(myRandom(["c1", "c2"]));
+        p.push(myRandom(["c1", "c2", "c3", "c4"]));
+        p.push(myRandom(["c1", "c2"]));
+        p.push(randParagraph());
+        p.push(myRandom(10));
+        createP(p.join(myChar));
+    }
 }
 
-function newCohort(){
-    let p =[];
-    p.push(randName());
-    p.push(myRandom(15,25));
-    p.push(myRandom(locations));
-    p.push(myRandom(image_names));
-    p.push(myRandom(1,8));
-    p.push(myRandom(1,8));
-    p.push(myRandom(1,8));
-    p.push(myRandom(1,8));
-    return p.join("+");
+function newCohort(num) {
+    num = num || 1;
+    for (let i = 0; i < num; i++) {
+        let p = [];
+        p.push(randName());
+        p.push(myRandom(15, 25));
+        p.push(myRandom(locations));
+        p.push(myRandom(image_names));
+        p.push(myRandom(1, 8));
+        p.push(myRandom(1, 8));
+        p.push(myRandom(1, 8));
+        p.push(myRandom(1, 8));
+        createP(p.join(myChar));
+    }
 }
 
-function setup(){
+function setup() {
     noCanvas();
-    for (let i = 0; i < num ; i ++){
-        if(studentFlag){
-            createP(newStudent());
-        }else{
-            createP(newCohort());
-        }
+    if (studentFlag) {
+        newStudent(s_num);
+    } else {
+        newCohort(c_num);
     }
 }

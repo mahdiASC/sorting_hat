@@ -141,7 +141,9 @@ class Cohort extends _base {
             student.forEach(x=>this.remove_student(x));
         }else{
             if(this.class.indexOf(student)==-1){
-                throw new Error(`Student not in ${this.name}'s .class`);
+                console.log(this.class);
+                console.log(student);
+                throw new Error(`Student not in ${this.name}'s .class. index was ${this.class.indexOf(student)}`);
             }
     
             delete student.cohort;

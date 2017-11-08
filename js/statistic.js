@@ -112,7 +112,7 @@ class Statistic {
             let title = $("<header/>");
             title.append(`<h2>Cohort Name: ${name}</h2>`); //name of cohort
             title.append(`<h4>Size: ${cohort.class.length}</h4>`); //class size
-            title.append(`<p>Discontent Rating: ${Math.round(c_stat.discontent.avg)}</h2>`); //happiness of class
+            title.append(`<p>Average Discontent Deviation: ${Math.round(c_stat.discontent.avg)}</h2>`); //happiness of class
             article.append(title);
 
             let graphs_container = $('<div class="graphs_container"/>');
@@ -168,24 +168,7 @@ class Statistic {
                 "Displeasure"
             ];
 
-            function _addHeader(table) {
-                //adds s_headers to table element
-                let row = $("<tr/>");
-                for (let i = 0; i < s_headers.length; i++) {
-                    row.append(`<th>${s_headers[i]}</th>`);
-                }
-                table.append(row);
-            }
-            _addHeader(student_table);
-
-            function _addRow(table, s_data) {
-                //adds s_data to table element
-                let row = $("<tr/>");
-                for (let i = 0; i < s_data.length; i++) {
-                    row.append(`<td>${s_data[i]}</td>`);
-                }
-                table.append(row);
-            }
+            _addHeader(student_table, s_headers);
 
             for (let student of c_class) {
                 // let travel_time = student.durations.find(x=>x.cohort==student.cohort).duration;
@@ -208,9 +191,59 @@ class Statistic {
             }
         }
 
+        this.createWaitList();
         addAscDescFunctionality();
     }
 
+    createWaitList(){
+        // creates a table of waitlisted students, in order of average score between all cohorts
+        let waitlisted = Student.all.filter(s => !s.cohort).sort((a,b)=>{
+            return calc_disc_avg(a)-calc_disc_avg(b);
+        })//sorting by avg discontent
+        //setting up container
+        let article = $("<article />");
+        $(".statContainer").append(article);
+        
+        //title
+        let title = $("<header/>");
+        title.append(`<h2>Waiting List</h2>`); //name of cohort
+        title.append(`<h4>Size: ${waitlisted.length}</h4>`); //class size
+
+        let student_container = $(`<div id="waitlisted" />`);
+        article.append(student_container);
+        let s_title = $("<div/>");
+        s_title.append(`<h2>Student info for Waitlisted</h2>`);
+        student_container.append(s_title);
+        
+        let waitlist_table = $(`<table />`);
+        student_container.append(waitlist_table);
+
+        //Adding header to table
+        let s_headers = [
+            "Name",
+            "Ethnicity",
+            "Grade",
+            "School Type",
+            "CS skill?",
+            "Avg. Discontent"
+        ];
+
+        _addHeader(waitlist_table, s_headers);
+
+        for (let student of waitlisted) {
+            let s_displ_avg = calc_disc_avg(student);
+
+            let s_data = [
+                student.name,
+                student.ethnicity,
+                student.grade,
+                student.school_type,
+                student.prev_cs,
+                s_displ_avg
+            ];
+            _addRow(waitlist_table, s_data);
+        }
+    }
     scoreHappiness(cohort) {
         // "happiness" of student's cohort by priority score
         console.log(cohort)
@@ -224,6 +257,10 @@ class Statistic {
         }
         return avgArray(score);
     }
+}
+
+let makeStudentPopout = function(student_index){
+
 }
 
 let makeGraph = function (name, myData) {
@@ -247,6 +284,27 @@ let makeGraph = function (name, myData) {
             }
         }
     });
+}
+
+function calc_disc_avg(student){
+    return avgArray(student.scores.map(x => x.score));
+}
+function _addHeader(table, headers) {
+    //adds headers to table element
+    let row = $("<tr/>");
+    for (let i = 0; i < headers.length; i++) {
+        row.append(`<th>${headers[i]}</th>`);
+    }
+    table.append(row);
+}
+
+function _addRow(table, data) {
+    //adds data to table element
+    let row = $("<tr/>");
+    for (let i = 0; i < data.length; i++) {
+        row.append(`<td>${data[i]}</td>`);
+    }
+    table.append(row);
 }
 
 function addAscDescFunctionality() {
@@ -284,3 +342,4 @@ function addAscDescFunctionality() {
         });
     })
 }
+

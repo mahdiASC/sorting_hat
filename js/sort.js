@@ -38,11 +38,6 @@ class Sort {
         }
     }
 
-    // createWaitlist() {
-    //     //creates waitlist
-    //     this.waitlist = this.students.filter(s => !s.cohort);
-    // }
-
     unfilledCohorts() {
         //returns array of unfilled Cohort objects
         return this.cohorts.filter(x => x.class.length < x.capacity);
