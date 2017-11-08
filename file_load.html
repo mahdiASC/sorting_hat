@@ -5,27 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
+    <link rel="stylesheet" href="css/file_load.css">
 </head>
 <body>
     <div id="page-wrapper">
         
         <h1>Input files for sorting</h1>
         <h3>NOTE: the following files require a unique setup beforehand</h3>
-        <div>
-            <label for="cohort_file">Select a Cohort file (CSV):</label>
-            <br>
-            <input type="file" id="cohort_file" class="hidden"/>
+        <div class="fileUpload btn btn-primary">
+            <span>Select a Cohort file (CSV):
+                <br>
+                <span class="file_text"> Default: 'cohort.csv'</span>
+            </span>
+            <input type="file" id="cohort_file" class="upload" />
         </div>
-        <div>
-            <label for="question_file">Select a Question file (JSON):</label>
-            <br>
-            <input type="file" id="question_file" class="hidden"/>
+
+
+        <div class="fileUpload btn btn-primary">
+            <span>Select a Question file (JSON):
+                <br>
+                <span class="file_text"> Default: 'question.json'</span>
+            </span>
+            <input type="file" id="question_file" class="upload" />
         </div>
-        <div>
-            <label for="student_file">Select a Student file (CSV or JSON):</label>
-            <br>
-            <input type="file" id="student_file" class="hidden"/>
+
+        <div class="fileUpload btn btn-primary">
+            <span>Select a Student file (CSV or JSON):
+                <br>
+                <span class="file_text"> Default: 'student.json'</span>
+            </span>
+            <input type="file" id="student_file" class="upload" />
         </div>
+
         <button onclick="myFunc()">Submit</button>
     </div>
 
@@ -111,94 +122,10 @@ var q_file;
 var s_file;
 var c_reader;
 var data
-myFunc = function(){
-
-    let file_ids = [
-        "cohort_file",
-        "question_file",
-        "student_file"
-    ]
-    
-    let urls = [
-        "./data/cohorts.csv",
-        "./data/questions.json",
-        "./data/students.csv",
-        "./data/students.json"
-    ];
-    
-    for(let i =0 ; i<file_ids.length; i++){
-        let file = document.getElementById(file_ids[i]).files[0];
-        if(file){
-            //path of loading user's file
-            let reader = new FileReader();
-            reader.onload = function(e){
-                if(file_ids[i]=="student_file"){
-                    let j_re = new RegExp(".json");
-                    let c_re = new RegExp(".csv");
-                    if (j_re.exec(file.name)) {
-                        Student.createFromJSON(JSON.parse(reader.result));
-                    }else if(c_re.exec(file.name)){
-                        Student.createFromCSVString(reader.result);
-                    }else{
-                        throw new Error("File error!");
-                    }
-                }else if(file_ids[i]=="question_file"){
-                    Question.createFromJSON(JSON.parse(reader.result));
-                }else if(file_ids[i]=="cohort_file"){
-                    Cohort.createFromCSVString(reader.result);
-                }else{
-                    throw new Error("File error!");
-                }     
-            }
-            reader.readAsText(file);
-        }else{
-            //path of loading default file
-            if(file_ids[i]=="student_file"){
-                let url;
-                if (useStudentJSON) {
-                     url = urls[i+1];
-                     store_file(url,x => Student.createFromJSON(x));
-                }else{
-                    url = urls[i];
-                    store_file(url,x => Student.createFromCSVString(x));
-                }
-            }else if(file_ids[i]=="question_file"){
-                store_file(urls[i],x => Question.createFromJSON(x));
-            }else if(file_ids[i]=="cohort_file"){
-                store_file(urls[i],x => Cohort.createFromCSVString(x));
-            }else{
-                throw new Error("File error!");
-            }
-        }
-    }
-    
-}
-    </script>
-    <script>
-        // Annoying CORS
-// https://chrome.google.com/webstore/detail/allow-control-allow-origi/nlfbmbojpeacfghkpbjhddihlkkiljbi
-// NOTE: csv need "+" as delimiter
-
-
-
-    //loading data into files
-    // store_file(urls[0],x => Cohort.createFromCSVString(x));
-    // store_file("../cohorts.csv",x => Cohort.createFromCSVString(x));
-    // store_file(urls[1],x => Question.createFromJSON(x));
-    // store_file("../questions.json",x => Question.createFromJSON(x));
-    //loading students as JSON (from previous load)
-    // if (useStudentJSON) {
-    //     store_file(urls[3],x => Student.createFromJSON(x));
-        // store_file("../students.json",x => Student.createFromJSON(x));
-    // } else {
-    //     store_file(urls[2],x => Student.createFromCSVString(x));
-        // store_file("../students.csv",x => Student.createFromCSVString(x));
-    // }
-
-    //Filtering out white applicants to threshold
-
-    //CODE THIS!
 
     </script>
+
+
+<script src="js/file_load.js"></script>
 </body>
 </html>
