@@ -171,8 +171,7 @@ class Statistic {
             _addHeader(student_table, s_headers);
 
             for (let student of c_class) {
-                // let travel_time = student.durations.find(x=>x.cohort==student.cohort).duration;
-                let travel = student.distances.find(x => x.cohort == student.cohort).distance; //OMIT (change to duration)
+                let travel = student.durations.find(x => x.cohort == student.cohort).duration;
 
                 let travel_time = Math.round(travel / 60 / 60, 2);
 

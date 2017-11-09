@@ -2,7 +2,7 @@ class Student extends _base {
     constructor(params) {
         super(params);
         this.scores = this.scores || [];
-        this.distances = this.distances || [];
+        this.durations = this.durations || [];
     }
     get techScore() {
         if (this._ts !== undefined) {

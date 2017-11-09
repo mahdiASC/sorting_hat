@@ -1,6 +1,6 @@
 let myChar = "/u0009"; //tab separating CSV content
 let studentFlag = true;
-let s_num = 3;
+let s_num = 20;
 let c_num = 1;
 
 let image_names = [

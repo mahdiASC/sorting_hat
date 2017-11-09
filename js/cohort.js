@@ -34,7 +34,7 @@ class Cohort extends _base {
         // return score;
     }
     
-    newdistStudent(student_arr, delay, timer){
+    setStudentDur(student_arr, delay, timer){
 
         setTimeout(()=>{
             let name = this.name;
@@ -43,8 +43,6 @@ class Cohort extends _base {
             let url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin_string}&destinations=${this.location.replace(/ /g, "+")}&key=AIzaSyDlA_pTF7IbYhUehFHwmZZZW9Cs9GbVGS8`
             $.get({
                 url: url,
-                // dataType:"jsonp",
-                // jsonCallback:data=>console.log(data),
                 success:data=>{
                     let data_rows = data.rows;
                     for(let i = 0; i <student_arr.length; i++){
@@ -57,7 +55,7 @@ class Cohort extends _base {
                             num =  data_rows[i].elements[0].duration.value;// the diratopm in second
                         }
 
-                        student_arr[i].distances.push({
+                        student_arr[i].durations.push({
                             "cohort": name,
                             "duration": num
                         });
@@ -96,14 +94,14 @@ class Cohort extends _base {
         });
     }
 
-    assignStudentDist(timer, big_delay){
+    assignStudentDur(timer, big_delay){
         //trying not to flood the api!
         setTimeout(()=>{
             let delay = 0; //millisecond delay
             let tempStudents = Student.all.map(x=>x);//making clone of array
             let students = tempStudents.splice(0,splice_number);
             while(students.length>0){//problem
-                this.newdistStudent(students, delay, timer);
+                this.setStudentDur(students, delay, timer);
                 students = tempStudents.splice(0,splice_number);
                 delay += secDelay*1000;
             }
@@ -175,7 +173,7 @@ Cohort.assessStudents = function () {
     let timer = new Timer(Student.all.length*Cohort.all.length);
     for (let cohort of Cohort.all) {
         cohort.scoreStudents();
-        cohort.assignStudentDist(timer,delay);
+        cohort.assignStudentDur(timer,delay);
         delay += secDelay*1000*length/splice_number;
     }
 }

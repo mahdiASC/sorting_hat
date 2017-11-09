@@ -1,5 +1,5 @@
-// let max_seconds = max_travel_time *3600;
-let max_seconds = 1936026; //OMIT THIS (just for testing)
+let max_seconds = max_travel_time * 3600;
+
 let priority_list = priorities.map(x => Priority.find_by_name(x));
 
 var store_file = function (file, func) {

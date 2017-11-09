@@ -5,9 +5,9 @@ class Priority{
             this.constructor.all = []
         }
         this.constructor.all.push(this);
-        this.call_func=x=>{
+        this.call_func=()=>{
             console.log(`Sorting by ${capFirst(this.priority)}...`);
-            return func.bind(this)(x);
+            return func.bind(this)();
         };
     }
 
@@ -119,16 +119,16 @@ new Priority(
 new Priority(
     "duration",
     function(){
-        let get_ideals = function(cohort, arr,flag=true){
-            return arr.filter(student=>{
-                // let duration_obj = student.duration.find(x=>x.cohort==cohort.name);
-                let duration_obj = student.distances.find(x=>x.cohort==cohort.name); //OMIT (changing to 'duration')
+        let get_ideals = function(cohort,flag=true){
+            // returns students within duration range
+            return cohort.class.filter(student=>{
+                let duration_obj = student.durations.find(x=>x.cohort==cohort.name);
+
                 if(flag){
-                    // return duration_obj.duration<=max_seconds;
-                    return duration_obj.distance<=max_seconds;//OMIT (changing to 'duration')
+                    return duration_obj.duration<=max_seconds;
+
                 }else{
-                    // return duration_obj.duration>max_seconds;
-                    return duration_obj.distance>max_seconds;//OMIT (changing to 'duration')
+                    return duration_obj.duration>max_seconds;
                 }
             });
         }
@@ -137,14 +137,10 @@ new Priority(
             //adds an ideal candidates from pool of students in waiting
             cohort.sortStudentScores();
             let sorted_ideals = get_ideals(cohort,cohort.waitlist).sort((studentA,studentB)=>{
-                // let duration_objA = studentA.durations.find(x=>x.cohort==cohort.name); //OMIT (changing to 'duration')
-                let objA = studentA.distances.find(x=>x.cohort==cohort.name); //OMIT (changing to 'duration')
+                let duration_objA = studentA.durations.find(x=>x.cohort==cohort.name); 
+                let objB = studentB.durations.find(x=>x.cohort==cohort.name); 
                 
-                // let duration_objB = studentB.durations.find(x=>x.cohort==cohort.name); //OMIT (changing to 'duration')
-                let objB = studentB.distances.find(x=>x.cohort==cohort.name); //OMIT (changing to 'duration')
-                
-                // return objA.duration-objB.duration;
-                return objA.distance-objB.distance; //OMIT (changing to 'duration')
+                return objA.duration-objB.duration;
             });
 
             let gap = cohort.capacity - cohort.class.length; //get number missing and only add what's needed
@@ -155,7 +151,7 @@ new Priority(
 
         let remove_non_ideals = function(cohort){
             //removes any students in cohort's class over the threshold
-            cohort.remove_student(get_ideals(cohort,cohort.class, false));
+            cohort.remove_student(get_ideals(cohort, false));
         }
 
         Cohort.all.forEach(cohort=>{
@@ -189,8 +185,7 @@ new Priority(
             //sorting class by score in desc order (worst are first)
             let c_class = cohort.sortClass("desc");
             let students_10s=get_10s(cohort.class);
-    
-            while(students_10s.length>ideal_num){
+            while(students_10s && students_10s.length>ideal_num && ideal_num > 0){
                 cohort.remove_student(students_10s[0]);
                 students_10s=get_10s(cohort.class);
             }
