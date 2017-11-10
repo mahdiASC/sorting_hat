@@ -1,9 +1,9 @@
 class Cohort extends _base {
     constructor(params) {
         super();
-        this.class = [];
-        this.waitlist = [];
-        this.ideal_stats = {};
+        this.class = this.class || [];
+        this.waitlist = this.waitlist || [];
+        this.ideal_stats = this.ideal_stats || {};
         this.name = params.name;
         this.capacity = params.capacity;
         this.location = params.location;
@@ -33,37 +33,95 @@ class Cohort extends _base {
 
         // return score;
     }
+    xsetStudentDur(student_arr, timer){
+        return new Promise((resolve, reject)=>{
+            setTimeout(()=>{
+                console.log(student_arr);
+                timer.update(student_arr.length);
+                resolve();
+            },delay);
+        })
+    }
+
+    setStudentDur(student_arr, timer){
+        return new Promise((resolve, reject)=>{
+            setTimeout(()=>{
+                let name = this.name;
+                let origin_string = student_arr.map(s=>encodeURIComponent(s.address)).join("|");
+                let url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin_string}&destinations=${this.location.replace(/ /g, "+")}&key=AIzaSyDlA_pTF7IbYhUehFHwmZZZW9Cs9GbVGS8`
+                $.get({
+                    url: url,
+                    success:data=>{
+                        let data_rows = data.rows;
+                        for(let i = 0; i <student_arr.length; i++){
+                            var num;
+                            if(data_rows[i].elements[0].status!="OK"){
+                                num = "Infinity";
+                                console.log(student_arr[i].address);
+                                console.log("Error: "+ data_rows[i].elements[0].status);
+                            }else{
+                                num =  data_rows[i].elements[0].duration.value;// the diratopm in second
+                            }
     
-    setStudentDur(student_arr, delay, timer){
-
-        setTimeout(()=>{
-            let name = this.name;
-            let origin_string = student_arr.map(s=>encodeURIComponent(s.address)).join("|");
-            // let origin_string = student_arr.map(s=>s.address.replace(/ /g, "+")).join("|");
-            let url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin_string}&destinations=${this.location.replace(/ /g, "+")}&key=AIzaSyDlA_pTF7IbYhUehFHwmZZZW9Cs9GbVGS8`
-            $.get({
-                url: url,
-                success:data=>{
-                    let data_rows = data.rows;
-                    for(let i = 0; i <student_arr.length; i++){
-                        var num;
-                        if(data_rows[i].elements[0].status!="OK"){
-                            num = "Infinity";
-                            console.log(student_arr[i].address);
-                            console.log("Error: "+ data_rows[i].elements[0].status);
-                        }else{
-                            num =  data_rows[i].elements[0].duration.value;// the diratopm in second
+                            student_arr[i].durations.push({
+                                "cohort": name,
+                                "duration": num
+                            });
                         }
-
-                        student_arr[i].durations.push({
-                            "cohort": name,
-                            "duration": num
-                        });
+                        timer.update(student_arr.length);
+                        resolve();
                     }
-                    timer.update(student_arr.length);
+                })
+            }, delay); //1 sec good idea
+        })
+    }
+
+    assignStudentDur(student_arr){
+        let length = student_arr.length;
+        let timer = new Timer(length*Cohort.all.length);
+        
+        //chopping up input student_arr into 2D array depending on splice
+        let tempStudents = [];
+        while(student_arr.length>0){
+            tempStudents.push(student_arr.splice(0,splice_number));
+        }
+        
+        return new Promise((resolve, reject)=>{
+
+            let mainLoad = function(loop){
+                let index = loop.iteration();
+                let cohort = Cohort.all[index];
+                
+                let innerLoad = function(in_loop){
+                    let in_index = in_loop.iteration();
+                    let students = tempStudents[in_index];
+                    cohort.setStudentDur(students, timer).then(()=>{
+                        in_loop.next();
+                    });
                 }
-            })
-        }, delay);
+
+                asyncLoop(tempStudents.length, innerLoad, loop.next);
+            }
+
+            asyncLoop(Cohort.all.length, mainLoad, resolve);
+        })
+    }
+
+    xassignStudentDur(timer, big_delay){
+        //depricated
+        return new Promise((resolve, reject)=>{
+            //trying not to flood the api!
+            setTimeout(()=>{
+                let delay = 0; //millisecond delay
+                let tempStudents = Student.all.map(x=>x);//making clone of array
+                let students = tempStudents.splice(0,splice_number);
+                while(students.length>0){
+                    this.setStudentDur(students, delay, timer);
+                    students = tempStudents.splice(0,splice_number);
+                    delay += secDelay*1000;
+                }
+            },big_delay);
+        })
     }
 
     scoreStudents() {
@@ -94,20 +152,6 @@ class Cohort extends _base {
         });
     }
 
-    assignStudentDur(timer, big_delay){
-        //trying not to flood the api!
-        setTimeout(()=>{
-            let delay = 0; //millisecond delay
-            let tempStudents = Student.all.map(x=>x);//making clone of array
-            let students = tempStudents.splice(0,splice_number);
-            while(students.length>0){//problem
-                this.setStudentDur(students, delay, timer);
-                students = tempStudents.splice(0,splice_number);
-                delay += secDelay*1000;
-            }
-        },big_delay);
-    }
-    
     popLowest(arr) {
         //removes lowest scored student from class
         //sorts then pops
@@ -177,12 +221,3 @@ Cohort.assessStudents = function () {
         delay += secDelay*1000*length/splice_number;
     }
 }
-
-var makeTextFile = function (text) {
-    var data = new Blob([text], { type: 'text/plain' });
-
-    textFile = window.URL.createObjectURL(data);
-
-    // returns a URL you can use as a href
-    return textFile;
-};

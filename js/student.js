@@ -61,11 +61,3 @@ class Student extends _base {
 Student.fullSort = function () {
     Student.all.forEach(x => x.selfSort());
 }
-
-Student.createFromJSON = function (json_obj) {
-    let output = [];
-    for (let i of json_obj) {
-        output.push(new this(i));
-    }
-    return output;
-}

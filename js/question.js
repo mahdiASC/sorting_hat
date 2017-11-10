@@ -84,3 +84,10 @@ Question.createFromJSON = function (obj) {
         return output.length>1 ? output : output[0];
     }
 }
+
+Question.createFromJSONPromise = function(obj){
+    return new Promise((resolve, reject)=>{
+        Question.createFromJSON(obj);
+        resolve();
+    });  
+}

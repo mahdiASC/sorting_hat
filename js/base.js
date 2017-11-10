@@ -15,18 +15,31 @@ class _base {
 }
 
 _base.createFromCSVString = function (fileString) {
-    let self = this;
-    let output = [];
-    Papa.parse(fileString, {
-        delimiter: myChar,
-        complete: function (results) {
-            let header = results.data[0];
-            for (let i = 1; i < results.data.length; i++) {
-                output.push(_parseObjects.apply(self, [header, results.data[i]]));
+    return new Promise((resolve, reject)=>{
+        let self = this;
+        
+        Papa.parse(fileString, {
+            delimiter: myChar,
+            complete: function (results) {
+                let header = results.data[0];
+                for (let i = 1; i < results.data.length; i++) {
+                    _parseObjects.apply(self, [header, results.data[i]]);
+                }
+                resolve();
             }
+        });
+    })
+}
+
+_base.createFromJSON = function (json_array) {
+    // input is an array of JSON objects
+    return new Promise((resolve, reject)=>{
+        let output = [];
+        for (let i of json_array) {
+            output.push(new this(i));
         }
-    });
-    return output;
+        resolve(output);
+    })
 }
 
 _parseObjects = function (header, arr) {

@@ -312,6 +312,40 @@ function removeArrayItem(arr, item) {
 //     return  this.map(x=>x);
 // };
 
+// Asynchronous loop
+// https://stackoverflow.com/questions/4288759/asynchronous-for-cycle-in-javascript
+function asyncLoop(iterations, func, callback) {
+  var index = 0;
+  var done = false;
+  var loop = {
+      next: function() {
+          if (done) {
+              return;
+          }
+
+          if (index < iterations) {
+              index++;
+              func(loop);
+
+          } else {
+              done = true;
+              callback();
+          }
+      },
+
+      iteration: function() {
+          return index - 1;
+      },
+
+      break: function() {
+          done = true;
+          callback();
+      }
+  };
+  loop.next();
+  return loop;
+}
+
 // Export node module.
 if ( typeof module !== 'undefined' && module.hasOwnProperty('exports') )
 {

@@ -8,11 +8,12 @@ class Sort {
     // score on location (logged?) pulled from Google Maps API
     // average school_type +/- 3 students
 
-    constructor() {
+    constructor(flag) {
+        flag = flag || false; //controls whether students need assessment (student.csv is loaded)
         this.cohorts = Cohort.all.map(x=>x); //making copy
         Student.all = Student.all.filter(x=>x.ethnicity!="White"); //filtering out whites
         this.students = Student.all.map(x=>x)
-        if(!useStudentJSON){
+        if(flag){
             Cohort.assessStudents();
         }
         Student.fullSort();//students have their self scores sorted by best scores first

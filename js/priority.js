@@ -122,6 +122,7 @@ new Priority(
         let get_ideals = function(cohort,flag=true){
             // returns students within duration range
             return cohort.class.filter(student=>{
+                console.log(student);
                 let duration_obj = student.durations.find(x=>x.cohort==cohort.name);
 
                 if(flag){
