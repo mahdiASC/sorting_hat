@@ -1,46 +1,20 @@
 class Cohort extends _base {
     constructor(params) {
         super();
-        this.class = this.class || [];
-        this.waitlist = this.waitlist || [];
-        this.ideal_stats = this.ideal_stats || {};
+        this.class = params.class || [];
+        this.waitlist = params.waitlist || [];
+        this.ideal_stats = params.ideal_stats || {};
         this.name = params.name;
         this.capacity = params.capacity;
         this.location = params.location;
         this.img = params.img;
-        let statKeys = Object.keys(params).filter(key => !Object.keys(this).includes(key));
-        for (let i of statKeys) {
-            this.ideal_stats[i] = Number(params[i]);
-        }
-    }
-
-    scoreStudent(student) {
-        //scores a single student
-        // uses total R^2 (ideal candidate has R^2 of 0)
-        let score = 0;
-        for (let key of Object.keys(this.ideal_stats)) {
-            if (!student.stats[key]) {
-                student.stats[key] = 0;
+        if (!this.ideal_stats){
+            //when loaded from json, won't need to pull from property names
+            let statKeys = Object.keys(params).filter(key => !Object.keys(this).includes(key));
+            for (let i of statKeys) {
+                this.ideal_stats[i] = Number(params[i]);
             }
-            let diff = Math.abs(student.stats[key] - this.ideal_stats[key]);
-            score += Math.pow(diff, 2);
         }
-        //adding cohort to student's list
-        student.scores.push({
-            "cohort": this.name,
-            "score": score
-        })
-
-        // return score;
-    }
-    xsetStudentDur(student_arr, timer){
-        return new Promise((resolve, reject)=>{
-            setTimeout(()=>{
-                console.log(student_arr);
-                timer.update(student_arr.length);
-                resolve();
-            },delay);
-        })
     }
 
     setStudentDur(student_arr, timer){
@@ -75,10 +49,9 @@ class Cohort extends _base {
             }, delay); //1 sec good idea
         })
     }
-
+    
     assignStudentDur(student_arr){
-        let length = student_arr.length;
-        let timer = new Timer(length*Cohort.all.length);
+        let timer = new Timer(student_arr.length*Cohort.all.length);
         
         //chopping up input student_arr into 2D array depending on splice
         let tempStudents = [];
@@ -107,20 +80,21 @@ class Cohort extends _base {
         })
     }
 
-    xassignStudentDur(timer, big_delay){
-        //depricated
-        return new Promise((resolve, reject)=>{
-            //trying not to flood the api!
-            setTimeout(()=>{
-                let delay = 0; //millisecond delay
-                let tempStudents = Student.all.map(x=>x);//making clone of array
-                let students = tempStudents.splice(0,splice_number);
-                while(students.length>0){
-                    this.setStudentDur(students, delay, timer);
-                    students = tempStudents.splice(0,splice_number);
-                    delay += secDelay*1000;
-                }
-            },big_delay);
+    scoreStudent(student) {
+        //scores a single student
+        // uses total R^2 (ideal candidate has R^2 of 0)
+        let score = 0;
+        for (let key of Object.keys(this.ideal_stats)) {
+            if (!student.stats[key]) {
+                student.stats[key] = 0;
+            }
+            let diff = Math.abs(student.stats[key] - this.ideal_stats[key]);
+            score += Math.pow(diff, 2);
+        }
+        //adding cohort to student's list
+        student.scores.push({
+            "cohort": this.name,
+            "score": score
         })
     }
 
@@ -205,19 +179,3 @@ Cohort.find_by_name = function (name) {
     return Cohort.all.find(x => x.name == name);
 }
 
-Cohort.assessStudents = function () {
-    //JSON Saved students already scored
-    let length = Student.all.length;
-    let delay = 0;
-    let total_time = secDelay*Student.all.length*Cohort.all.length/splice_number;
-    let minutes = Math.floor(total_time/60, 2);
-    let seconds = Math.round(total_time - minutes*60,2);
-
-    console.log("Estimated total time "+ minutes + " minute(s) " + seconds + " second(s)")  ;
-    let timer = new Timer(Student.all.length*Cohort.all.length);
-    for (let cohort of Cohort.all) {
-        cohort.scoreStudents();
-        cohort.assignStudentDur(timer,delay);
-        delay += secDelay*1000*length/splice_number;
-    }
-}

@@ -185,9 +185,9 @@ function DummyData(){
         this.loadData(func, num);
         
         if (flag) {
-            createP(this.makeTextFile("students.json",JSON.stringify(Student.all)));
+            createP(makeTextFile("students.json",JSON.stringify(Student.all)));
         } else {
-            createP(this.makeTextFile("cohorts.json",JSON.stringify(Cohort.all)));
+            createP(makeTextFile("cohorts.json",JSON.stringify(Cohort.all)));
         }
     }
 
@@ -199,17 +199,19 @@ function DummyData(){
         }
     }
 
-    this.makeTextFile = function (file_name,text) {
-        var data = new Blob([text], { type: 'text/plain' });    
-        // returns a URL you can use as a href
-        $("body").append($("<a />", {
-            href: window.URL.createObjectURL(data),
-            text: `Download "${file_name}"` ,
-            download: file_name
-        }));
-        return text;
-    };
 }
+
+//creates a download button and file for any plain text
+makeTextFile = function (file_name,text) {
+    var data = new Blob([text], { type: 'text/plain' });    
+    // returns a URL you can use as a href
+    $("body").append($("<a />", {
+        href: window.URL.createObjectURL(data),
+        text: `Download "${file_name}"` ,
+        download: file_name
+    }));
+    return text;
+};
 
 function setup(){
     noCanvas();

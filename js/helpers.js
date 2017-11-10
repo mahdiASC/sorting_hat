@@ -29,9 +29,14 @@ $("div.fileUpload").each(function (x) {
     });
 })
 
-// let x,y;
-// function startSort() {
-//     x = new Sort;
-//     y = new Statistic;
-//     y.visualize_stats();
-// }
+//creates a download button and file for any plain text
+let makeTextFile = function (file_name,text) {
+    var data = new Blob([text], { type: 'text/plain' });    
+    // returns a URL you can use as a href
+    $("body").append($("<a />", {
+        href: window.URL.createObjectURL(data),
+        text: `Download "${file_name}"` ,
+        download: file_name
+    }));
+    return text;
+};

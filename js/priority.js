@@ -92,7 +92,6 @@ new Priority(
 
         let remove_non_ideal = function(cohort){
             //if needed, will remove a non-brown student from class
-            console.log(cohort.class.length);
             if(cohort.class.length>=cohort.capacity && !validCohort(cohort)){
                 //remove lowest scored non-brown student
                 let c_class = getBrowns(cohort.sortClass("desc"),false);
@@ -122,7 +121,6 @@ new Priority(
         let get_ideals = function(cohort,flag=true){
             // returns students within duration range
             return cohort.class.filter(student=>{
-                console.log(student);
                 let duration_obj = student.durations.find(x=>x.cohort==cohort.name);
 
                 if(flag){
@@ -138,7 +136,7 @@ new Priority(
             //adds an ideal candidates from pool of students in waiting
             cohort.sortStudentScores();
             let sorted_ideals = get_ideals(cohort,cohort.waitlist).sort((studentA,studentB)=>{
-                let duration_objA = studentA.durations.find(x=>x.cohort==cohort.name); 
+                let objA = studentA.durations.find(x=>x.cohort==cohort.name); 
                 let objB = studentB.durations.find(x=>x.cohort==cohort.name); 
                 
                 return objA.duration-objB.duration;

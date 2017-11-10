@@ -17,9 +17,9 @@
         <h1>Input files for sorting</h1>
         <h3>NOTE: the following files require a unique setup beforehand</h3>
         <div class="fileUpload btn btn-primary">
-            <span>Select a Cohort file (CSV):
+            <span>Select a Cohort file (CSV or JSON):
                 <br>
-                <span class="file_text"> Default: 'cohort.csv'</span>
+                <span class="file_text"> Default: 'cohort.json'</span>
             </span>
             <input type="file" id="cohort_file" class="upload" />
         </div>
@@ -41,7 +41,7 @@
             <input type="file" id="student_file" class="upload" />
         </div>
 
-        <button onclick="new FileLoader().loadout()">Submit</button>
+        <button onclick="new FileLoader(false).loadout()">Submit</button>
     </div>
     <div class="mainContainer">
         <div class="top">

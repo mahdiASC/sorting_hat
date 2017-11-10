@@ -20,7 +20,7 @@ let useStudentJSON = true; //if false, will allos download of student JSON file
 let api_key = 'AIzaSyDlA_pTF7IbYhUehFHwmZZZW9Cs9GbVGS8';
 let secDelay = 1; //delay in seconds for api call
 let splice_number = 100; //number of students per API call (max 100)
-
+let wantDownloads = true;
 //////////////
 // DEFAULTS //
 //////////////
