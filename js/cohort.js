@@ -2,7 +2,7 @@ class Cohort extends _base {
     constructor(params) {
         super();
         this.class = params.class || [];
-        this.waitlist = params.waitlist || [];
+        this.waitlist = params.waitlist || []; //NOTE: not very useful. Can OMIT
         this.ideal_stats = params.ideal_stats || {};
         this.name = params.name;
         this.capacity = params.capacity;
@@ -102,16 +102,16 @@ class Cohort extends _base {
         for (let student of Student.all) {
            this.scoreStudent(student);
         }
-        this.sortStudentScores();//creating waitlist by score
+        // this.sortStudentScores();//creating waitlist by score
     }
 
-    sortStudentScores(){
-        this.waitlist = Student.all.filter(x=>!x.cohort).sort((a,b)=>{
-            let fa = a.scores.find(x=>x.cohort==this.name);
-            let fb = b.scores.find(x=>x.cohort==this.name);
-            return fa.score-fb.score;
-        });
-    }
+    // sortStudentScores(){
+    //     this.waitlist = Student.all.filter(x=>!x.cohort).sort((a,b)=>{
+    //         let fa = a.scores.find(x=>x.cohort==this.name);
+    //         let fb = b.scores.find(x=>x.cohort==this.name);
+    //         return fa.score-fb.score;
+    //     });
+    // }
 
     sortClass(direction = "asc"){
         //reversible sort
@@ -135,7 +135,6 @@ class Cohort extends _base {
             return fa.score-fb.score;
         });
         let student = this.class.pop();
-        this.waitlist.push(student);
         delete student.cohort;
     }
 
@@ -145,33 +144,39 @@ class Cohort extends _base {
         
         if(Array.isArray(student)){
             student.forEach(x=>this.add_student(x));
+        }else if (student instanceof Student){
+            if(!this.class.includes(student)){
+                this.class.push(student);
+                student.cohort = this.name; //take into account when pop
+                // this.sortStudentScores();
+            }else{
+                throw new Error(`Attempted to duplicate student in class: ${student.name}`);
+            }
         }else{
-            this.class.push(student);
-            student.cohort = this.name; //take into account when pop
-            this.sortStudentScores();
+            throw new Error(`Input was not a Student object or an array of Student objects: ${student}`);
         }
     }
 
     remove_student(student){
         if(Array.isArray(student)){
             student.forEach(x=>this.remove_student(x));
-        }else{
+        }else if(student instanceof Student){
             if(this.class.indexOf(student)==-1){
-                console.log(this.class);
-                console.log(student);
                 throw new Error(`Student not in ${this.name}'s .class. index was ${this.class.indexOf(student)}`);
             }
     
             delete student.cohort;
             //adding to wait list
             return this.class.splice(this.class.findIndex(x=>x==student),1);
-            this.sortStudentScores();
-        }        
+            // this.sortStudentScores();
+        }else{
+            throw new Error(`Input was not a Student object or an array of Student objects: ${student}`);
+        }
     }
 
     fullcheck() {
         // returns true if class full
-        return this.class >= this.capacity;
+        return this.class.length >= this.capacity;
     }
 }
 

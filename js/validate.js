@@ -1,40 +1,32 @@
 class Validate{
-    constructor(cohorts,students){
-        this.cohorts = cohorts || Cohort.all; //hacky solution for testing
-        this.students = students || Student.all;
+    constructor(){
     }
 
     main(){
-        if(this.dupStudentsCheck()){
-            console.log("There are duplicate students!");
-            console.log("Duplicates:");
-            let dups = this.getDups()
-            for(let i = 0; i < dups.length; i++){
-                console.log(`${dups[i].name} was supposed to be in ${dups[i].cohort}`);
-            }
-        };
-    }
-
-    dupStudentsCheck(){
-        //number in cohorts don't match number wth cohorts
-        let count = 0;
-        for(let i = 0; i < this.cohorts.length; i++){
-            count += this.cohorts[i].class.length;
+        let dups = this.getDups();
+        if(dups.length>0){
+            this.reportDups(dups);
+            throw new Error("Found duplicate entries!");
+        }else{
+            console.log("No duplicates found")
         }
-
-        return count!=this.students.filter(x=>!!x.cohort).length;
     }
 
     getDups(){
-        //find any student who is in the wrong cohort
         let output = [];
-        for(let i = 0; i < this.cohorts.length; i++){
-            for(let k of this.cohorts[i].class){
-                if(k.cohort!=this.cohorts[i].name){
-                    output.push(k);
-                }
-            }
+        for(let i = 0; i < Cohort.all.length; i++){
+            let cohort = Cohort.all[i];
+            output.concat(cohort.class.filter(x=>x.cohort!=cohort.name));
+            output.concat(findDuplicates(cohort.class));
         }
         return output;
+    }
+
+    reportDups(dups){
+        //dups is array of duplicate students
+        console.log("Duplicates:");
+        for(let i = 0; i < dups.length; i++){
+            console.log(`${dups[i].name} was supposed to be in ${dups[i].cohort}`);
+        }
     }
 }

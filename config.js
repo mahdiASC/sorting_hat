@@ -25,10 +25,14 @@ let wantDownloads = true;
 // DEFAULTS //
 //////////////
 
+// order matters
 let priorities = [
-    "score",
-    "duration",
-    "ethnicity",
+    "score"
+    ,
+    "duration"
+    ,
+    "ethnicity"
+    ,
     "grade"
 ]
 

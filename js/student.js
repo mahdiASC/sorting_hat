@@ -61,3 +61,7 @@ class Student extends _base {
 Student.fullSort = function () {
     Student.all.forEach(x => x.selfSort());
 }
+
+Student.waitlist = function(){
+    return Student.all.filter(x=>!x.cohort);
+}

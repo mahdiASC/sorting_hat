@@ -346,6 +346,26 @@ function asyncLoop(iterations, func, callback) {
   return loop;
 }
 
+// find duplicate elements of input array, returns array of duplicates
+function findDuplicates(data) {
+  
+    let result = [];
+  
+    data.forEach(function(element, index) {
+      
+      // Find if there is a duplicate or not
+      if (data.indexOf(element, index + 1) > -1) {
+        
+        // Find if the element is already in the result array or not
+        if (result.indexOf(element) === -1) {
+          result.push(element);
+        }
+      }
+    });
+  
+    return result;
+  }
+
 // Export node module.
 if ( typeof module !== 'undefined' && module.hasOwnProperty('exports') )
 {

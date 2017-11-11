@@ -8,13 +8,14 @@ class Sort {
     // score on location (logged?) pulled from Google Maps API
     // average school_type +/- 3 students
 
-    constructor(flag) {
-        flag = flag || false; //controls whether students need assessment (student.csv is loaded)
+    constructor() {
         this.cohorts = Cohort.all.map(x=>x); //making copy
-        Student.all = Student.all.filter(x=>x.ethnicity!="White"); //filtering out whites
-        this.students = Student.all.map(x=>x)
-
         Student.fullSort();//students have their self scores sorted by best scores first
+        
+        //OMIT
+        Student.all = Student.all.filter(x=>x.ethnicity!="White"); //filtering out whites
+
+        this.students = Student.all.map(x=>x)
         this.fillRosters();
     }
 
@@ -27,13 +28,16 @@ class Sort {
             throw new Error(`Number of students (${this.students.length}) insufficient to fill cohorts${this.cohorts.reduce((sum,val)=>sum+Number(val.capacity),0)}`);
         }
 
-        // loops down the priority list diminishing each successive round until only 
-        let temp_list = priority_list.map(x=>x);
-
-        while(temp_list.length>0){
-            //for each priority in priority_list, will cycle through each priority's .call()
-            temp_list.forEach(x=>x.call_func());
-            temp_list.pop();
+        // keeps going until all cohorts filled
+        let temp_list;
+        while(Cohort.all.some(x=>!x.fullcheck())){
+            temp_list = priority_list.map(x=>x);
+            // loops down the priority list diminishing each successive round until only 
+            while(temp_list.length>0){
+                //for each priority in priority_list, will cycle through each priority's .call()
+                temp_list.forEach(x=>x.call_func());
+                temp_list.pop();
+            }
         }
     }
 

@@ -136,6 +136,10 @@ class FileLoader {
     startSort() {
         //actually begins sorting
         new Sort; //NOTE: a bit unnecessary if cohorts are already filled
+
+        let x = new Validate() // prevents duplicates
+        x.main();
+
         let stats = new Statistic;
         stats.visualize_stats();
         if (wantDownloads) {

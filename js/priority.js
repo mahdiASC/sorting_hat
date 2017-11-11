@@ -27,27 +27,29 @@ Priority.find_by_name = function(str){
 new Priority(
     "score",
     function(){
-        if(this.counter){
-            this.counter++;//each call will go to next priority for student
-        }else{
-            this.counter = 0;
-        }
-
         let unfilled_cohorts = this.unfilled_cohorts();
         if (unfilled_cohorts.length==0){
             return;
         }
-
+        
         this.waiting_students().forEach(student=>{
-            let cohort_name = student.scores[this.counter].cohort;
-            Cohort.find_by_name(cohort_name).add_student(student);
-        });
-
-        unfilled_cohorts.forEach(cohort=>{
-            while(cohort.class.length>cohort.capacity){
-                cohort.popLowest();
+            let counter = 0;
+            while(!student.cohort && counter < student.scores.length){
+                let cohort_name = student.scores[counter].cohort;
+                let cohort = Cohort.find_by_name(cohort_name)
+                if (!cohort.fullcheck()){
+                    cohort.add_student(student);
+                }
+                counter++;
             }
-        })
+        });
+        
+        //OMIT
+        // unfilled_cohorts.forEach(cohort=>{
+        //     while(cohort.class.length>cohort.capacity){
+        //         cohort.popLowest();
+        //     }
+        // })
     });
 
 // assess and fill all cohorts with valid student pool
@@ -79,7 +81,8 @@ new Priority(
         let add_ideal = function(cohort){
             //adds an ideal candidate from pool of brown students in waiting
             // returns true if adds student
-            cohort.sortStudentScores();//sets waitlist
+            // cohort.sortStudentScores();//sets waitlist
+            cohort.waitlist = Student.waitlist();
             let ideals = getBrowns(cohort.waitlist);
             if(ideals.length>0){
                 cohort.add_student(ideals[0]);
@@ -120,7 +123,15 @@ new Priority(
     function(){
         let get_ideals = function(cohort,flag=true){
             // returns students within duration range
-            return cohort.class.filter(student=>{
+            let list;
+            
+            if(flag){
+                list = cohort.waitlist;
+            }else{
+                list = cohort.class;
+            }
+
+            return list.filter(student=>{
                 let duration_obj = student.durations.find(x=>x.cohort==cohort.name);
 
                 if(flag){
@@ -129,13 +140,14 @@ new Priority(
                 }else{
                     return duration_obj.duration>max_seconds;
                 }
-            });
+            });            
         }
 
         let add_ideals = function(cohort){
             //adds an ideal candidates from pool of students in waiting
-            cohort.sortStudentScores();
-            let sorted_ideals = get_ideals(cohort,cohort.waitlist).sort((studentA,studentB)=>{
+            // cohort.sortStudentScores();
+            cohort.waitlist = Student.waitlist();
+            let sorted_ideals = get_ideals(cohort).sort((studentA,studentB)=>{
                 let objA = studentA.durations.find(x=>x.cohort==cohort.name); 
                 let objB = studentB.durations.find(x=>x.cohort==cohort.name); 
                 
@@ -143,7 +155,6 @@ new Priority(
             });
 
             let gap = cohort.capacity - cohort.class.length; //get number missing and only add what's needed
-
             // only adding enough to fill empty slots;
             cohort.add_student(sorted_ideals.splice(0,gap));
         }
