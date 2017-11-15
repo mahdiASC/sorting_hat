@@ -64,11 +64,35 @@ class Statistic {
     popup_stats(){
         let output = {};
         let students = Student.all;
+        
         // trait stats
-        // gpa
-        // 
+        output["stats"] = {}
+        
+        
+        students.forEach(x=>{
+            let stat_names =  Object.keys(x._s);
+            let i;
+            for(i = 0; i < stat_names.length; i++){
+                let stat = stat_names[i];
+                if(!output["stats"][stat]){
+                    output["stats"][stat]=0;
+                }
+                output["stats"][stat] += x._s[stat];
+            }
+        })
+        
+        let stats = Object.keys(output["stats"]);
+        for (let x = 0; x < stats.length; x++) {
+            let stat = stats[x];
+            output["stats"][stat] = output["stats"][stat] / students.length;
+        }
 
-        output[""]: this.unique_array_prop(focus.map(x => x.school_type))
+        // gpa, logic score, read score
+        output["GPA"] = this.unique_array_prop(students.map(x => x.gpa));
+        output["Logic Score"] = this.unique_array_prop(students.map(x => x.logic_score));
+        output["Read Score"] = this.unique_array_prop(students.map(x => x.essay_score));
+
+        return output;
     }
 
     unique_array_counts(arr) {
@@ -253,6 +277,7 @@ class Statistic {
             _addRow(waitlist_table, s_data, student);
         }
     }
+    
     scoreHappiness(cohort) {
         // "happiness" of student's cohort by priority score
         console.log(cohort)
@@ -298,26 +323,7 @@ let makeStudentPopup = function(student,e){
     });
 
 
-// <a data-popup-open="popup-2" href="#">
-//                         <h3>
-//                             Impact Evaluation
-//                         </h3>
-//                     </a>
-                    
-//                     <!-- POPUP #2 -->
-//                     <div class="popup" data-popup="popup-2">
-//                        <div class="popup-inner">
-//                             <h2>
-//                                     Impact Evaluation
-//                             </h2>
-//                            <p>
-//                                Donec in volutpat nisi. In quam lectus, aliquet rhoncus cursus a, congue et arcu. Vestibulum tincidunt neque id nisi pulvinar aliquam. Nulla luctus luctus ipsum at ultricies. Nullam nec velit dui. Nullam sem eros, pulvinar sed pellentesque ac, feugiat et turpis. Donec gravida ipsum cursus massa malesuada tincidunt. Nullam finibus nunc mauris, quis semper neque ultrices in. Ut ac risus eget eros imperdiet posuere nec eu lectus.
-//                             </p>
-//                            <p><a data-popup-close="popup-2" href="#">Close</a></p>
-//                            <a class="popup-close" data-popup-close="popup-2" href="#">x</a>
-//                        </div>
-//                    </div>
-//                 </div>
+
 
 }
 
@@ -347,6 +353,7 @@ let makeGraph = function (name, myData) {
 function calc_disc_avg(student){
     return avgArray(student.scores.map(x => x.score));
 }
+
 function _addHeader(table, headers) {
     //adds headers to table element
     let row = $("<tr/>");

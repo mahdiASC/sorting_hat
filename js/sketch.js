@@ -22,7 +22,8 @@ let student_params = [
     "s3",
     "s4",
     "essay",
-    "essay_score"
+    "essay_score",
+    "logic_score"
 ]
 let cohort_params = [
     "name",
@@ -131,6 +132,7 @@ function DummyData(){
         p.push(myRandom(["c1", "c2", "c3", "c4"]));
         p.push(myRandom(["c1", "c2"]));
         p.push(randParagraph());
+        p.push(myRandom(10));
         p.push(myRandom(10));
         if(p.length!=student_params.length){
             throw new Error(`Student params are wrong length: ${p.length} indead of ${student_params.length}`);
