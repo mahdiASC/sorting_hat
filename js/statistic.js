@@ -186,7 +186,7 @@ class Statistic {
                     travel_time,
                     s_displ
                 ];
-                _addRow(student_table, s_data);
+                _addRow(student_table, s_data, student);
             }
         }
 
@@ -240,7 +240,7 @@ class Statistic {
                 student.prev_cs,
                 s_displ_avg
             ];
-            _addRow(waitlist_table, s_data);
+            _addRow(waitlist_table, s_data, student);
         }
     }
     scoreHappiness(cohort) {
@@ -258,7 +258,56 @@ class Statistic {
     }
 }
 
-let makeStudentPopout = function(student_index){
+let makeStudentPopup = function(student,e){
+    let outer_popup = $("<div/>");
+    outer_popup.addClass("popup");
+    
+    let inner_popup = $("<div/>");
+    inner_popup.addClass("popup-inner");
+
+    outer_popup.append(inner_popup);
+    
+    //header
+    let header = $(`<h3>${student.name}</h3>`);
+    inner_popup.append(header);
+
+    //content
+    let content = $(`<p>${student.essay}</p>`);
+    inner_popup.append(content);    
+    //close buttons
+    inner_popup.append('<p><a data-popup-close="popup-2" href="#">Close</a></p><a class="popup-close" data-popup-close="popup-2" href="#">x</a>');
+    
+    $("body").append(outer_popup);
+    outer_popup.fadeIn(350);
+    e.preventDefault();
+
+    $('[data-popup-close]').on('click', function(e)  {
+        outer_popup.fadeOut(350);
+        e.preventDefault();
+        outer_popup.remove();
+    });
+
+
+// <a data-popup-open="popup-2" href="#">
+//                         <h3>
+//                             Impact Evaluation
+//                         </h3>
+//                     </a>
+                    
+//                     <!-- POPUP #2 -->
+//                     <div class="popup" data-popup="popup-2">
+//                        <div class="popup-inner">
+//                             <h2>
+//                                     Impact Evaluation
+//                             </h2>
+//                            <p>
+//                                Donec in volutpat nisi. In quam lectus, aliquet rhoncus cursus a, congue et arcu. Vestibulum tincidunt neque id nisi pulvinar aliquam. Nulla luctus luctus ipsum at ultricies. Nullam nec velit dui. Nullam sem eros, pulvinar sed pellentesque ac, feugiat et turpis. Donec gravida ipsum cursus massa malesuada tincidunt. Nullam finibus nunc mauris, quis semper neque ultrices in. Ut ac risus eget eros imperdiet posuere nec eu lectus.
+//                             </p>
+//                            <p><a data-popup-close="popup-2" href="#">Close</a></p>
+//                            <a class="popup-close" data-popup-close="popup-2" href="#">x</a>
+//                        </div>
+//                    </div>
+//                 </div>
 
 }
 
@@ -297,13 +346,17 @@ function _addHeader(table, headers) {
     table.append(row);
 }
 
-function _addRow(table, data) {
+function _addRow(table, data,student) {
     //adds data to table element
-    let row = $("<tr/>");
+    let row = $('<tr/>');
     for (let i = 0; i < data.length; i++) {
         row.append(`<td>${data[i]}</td>`);
     }
+    row.on("click",(e=>{
+        makeStudentPopup(student,e);
+    }));
     table.append(row);
+
 }
 
 function addAscDescFunctionality() {

@@ -88,6 +88,7 @@ table {
     cursor: pointer;
     font-weight: bold;
   }
+ 
   .selected {
     background-color: #ff00ff;
     color: #fff;
@@ -96,6 +97,11 @@ table {
   .asc:after {  content: "\25B2"; }
   .desc:after { content: "\25BC"; }
 
+div[id*='_students']:hover>table>tbody>tr:hover{
+    color: rgb(80,193,233);
+    text-decoration: underline;
+    cursor: pointer;
+}
 /* Setting up popout */
 /* Outer */
 .popup {
