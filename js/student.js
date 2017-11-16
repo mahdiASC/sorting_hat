@@ -1,8 +1,9 @@
 class Student extends _base {
     constructor(params) {
         super(params);
-        this.scores = this.scores || [];
-        this.durations = this.durations || [];
+        this.scores = params.scores || [];
+        this.durations = params.durations || [];
+        this.img = params.img || "placeholder.png";
     }
     get techScore() {
         if (this._ts !== undefined) {

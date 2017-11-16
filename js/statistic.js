@@ -142,6 +142,7 @@ class Statistic {
 
             //title
             let title = $("<header/>");
+            title.append(`<img src='assets/${cohort.img}'>`); //cohort image
             title.append(`<h2>Cohort Name: ${name}</h2>`); //name of cohort
             title.append(`<h4>Size: ${cohort.class.length}</h4>`); //class size
             title.append(`<p>Average Discontent Deviation: ${Math.round(c_stat.discontent.avg)}</h2>`); //happiness of class
@@ -301,6 +302,7 @@ let makeStudentPopup = function(student,stats,e){
     outer_popup.append(inner_popup);
     
     //header
+
     let header = $(`<h3>${student.name}</h3>`);
     inner_popup.append(header);
 
@@ -313,6 +315,7 @@ let makeStudentPopup = function(student,stats,e){
     let left_content = $("<div/>"); 
     left_content.addClass("popup-left");
     left_content.append("<h2>Info</h2>");
+    left_content.append(`<img src='assets/${student.img}'>`);
     content.append(left_content);
 
     let titles = Object.keys(raw_info);
