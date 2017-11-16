@@ -68,7 +68,6 @@ class Statistic {
         // trait stats
         output["stats"] = {}
         
-        
         students.forEach(x=>{
             let stat_names =  Object.keys(x._s);
             let i;
@@ -86,12 +85,11 @@ class Statistic {
             let stat = stats[x];
             output["stats"][stat] = output["stats"][stat] / students.length;
         }
-
+    
         // gpa, logic score, read score
-        output["GPA"] = this.unique_array_prop(students.map(x => x.gpa));
-        output["Logic Score"] = this.unique_array_prop(students.map(x => x.logic_score));
-        output["Read Score"] = this.unique_array_prop(students.map(x => x.essay_score));
-
+        output["GPA"] = avgArray(students.map(x => x.gpa));
+        output["Logic Score"] = avgArray(students.map(x => x.logic));
+        output["Read Score"] = avgArray(students.map(x => x.essay_score));
         return output;
     }
 
@@ -220,7 +218,7 @@ class Statistic {
                     travel_time,
                     s_displ
                 ];
-                _addRow(student_table, s_data, student);
+                _addRow(this,student_table, s_data, student);
             }
         }
 
@@ -274,7 +272,7 @@ class Statistic {
                 student.prev_cs,
                 s_displ_avg
             ];
-            _addRow(waitlist_table, s_data, student);
+            _addRow(this,waitlist_table, s_data, student);
         }
     }
     
@@ -293,7 +291,7 @@ class Statistic {
     }
 }
 
-let makeStudentPopup = function(student,e){
+let makeStudentPopup = function(student,stats,e){
     let outer_popup = $("<div/>");
     outer_popup.addClass("popup");
     
@@ -307,12 +305,116 @@ let makeStudentPopup = function(student,e){
     inner_popup.append(header);
 
     //content
-    let content = $(`<p>${student.essay}</p>`);
+    let content = $("<div/>");
+    content.addClass("student_info");
     inner_popup.append(content);    
+
+    // raw info
+    let left_content = $("<div/>"); 
+    left_content.addClass("popup-left");
+    left_content.append("<h2>Info</h2>");
+    content.append(left_content);
+
+    let titles = Object.keys(raw_info);
+    for(let w = 0; w<titles.length; w++){
+        let title = titles[w];
+        let content = student[raw_info[title]];
+        left_content.append(`<div class="content_holder"><span class="popup_title">${title}:</span><span class="popup_content">${content}</span></div>`);
+    }
+    // graphs
+    let right_content = $("<div/>");
+    right_content.addClass("popup-right");
+    right_content.append("<h2>Graphs</h2>");
+    content.append(right_content);
+
+    // traits graph
+    let t_canvas = $("<canvas id='t_canvas'></canvas>");
+    right_content.append(t_canvas);
+    let labels = Object.keys(stats.stats);
+    let t_data = {
+        labels: labels,
+        datasets:[{
+            label: 'Average',
+            backgroundColor:"rgba(80,193,233,0.75)",
+            data: labels.map(x=>Math.round(stats.stats[x], 2))
+            }
+            , 
+            {
+                label: student.name.split(" ")[0],
+                backgroundColor:"rgba(162,133,220,0.75)",
+                data: labels.map(x=>student._s[x])
+            }
+        ]
+    }
+    
+    // gpa graph
+    let g_canvas = $("<canvas id='g_canvas'></canvas>");
+    right_content.append(g_canvas);
+    let g_data = {
+        labels: ["GPA"],
+        datasets:[{
+            label: 'Average',
+            backgroundColor:"rgba(80,193,233,0.75)",
+            data: [Math.round(stats["GPA"],2)]
+            }
+            , 
+            {
+                label: student.name.split(" ")[0],
+                backgroundColor:"rgba(157,208,82,0.75)",
+                data: [student.gpa]
+            }
+        ]
+    }
+
+    // logic score graph
+    let l_canvas = $("<canvas id='l_canvas'></canvas>");
+    right_content.append(l_canvas);
+    let l_data = {
+        labels: ["Logic Score"],
+        datasets:[{
+            label: 'Average',
+            backgroundColor:"rgba(80,193,233,0.75)",
+            data: [Math.round(stats["Logic Score"],2)]
+            }
+            , 
+            {
+                label: student.name.split(" ")[0],
+                backgroundColor:"rgba(235,171,36,0.75)",
+                data: [student.logic]
+            }
+        ]
+    }
+
+    // readscore graph
+    let r_canvas = $("<canvas id='r_canvas'></canvas>");
+    right_content.append(r_canvas);
+    let r_data = {
+        labels: ["Read Score"],
+        datasets:[{
+            label: 'Average',
+            backgroundColor:"rgba(80,193,233,0.75)",
+            data: [Math.round(stats["Read Score"],2)]
+            }
+            , 
+            {
+                label: student.name.split(" ")[0],
+                backgroundColor:"rgba(234,93,79,0.75)",
+                data: [student.essay_score]
+            }
+        ]
+    }
+
     //close buttons
     inner_popup.append('<p><a data-popup-close="popup-2" href="#">Close</a></p><a class="popup-close" data-popup-close="popup-2" href="#">x</a>');
     
     $("body").append(outer_popup);
+
+    // can only load graphs until after on HTML
+    makeBarGraph("t_canvas", t_data, "Traits");
+    makeBarGraph("g_canvas", g_data, "GPA");
+    makeBarGraph("l_canvas", l_data, "Logic");
+    makeBarGraph("r_canvas", r_data, "Read");
+
     outer_popup.fadeIn(350);
     e.preventDefault();
 
@@ -321,13 +423,38 @@ let makeStudentPopup = function(student,e){
         e.preventDefault();
         outer_popup.remove();
     });
-
-
-
-
 }
 
-let makeGraph = function (name, myData) {
+function makeBarGraph(canvas_name, barChartData, title){
+    var ctx = document.getElementById(canvas_name);
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: barChartData,
+        options: {
+            responsive: false,
+            legend: {
+                position: 'top',
+            },
+            title: {
+                display: true,
+                text: title
+            }
+            ,
+            scales: {
+                yAxes: [{
+                    display: true,
+                    ticks: {
+                        // suggestedMin: 0,    // minimum will be 0, unless there is a lower value.
+                        beginAtZero: true   // minimum value will be 0.
+                    }
+                }]
+            }
+        }
+    });
+}
+
+function makeGraph(name, myData) {
     let full_labels = Object.keys(myData).sort((a, b) => myData[b] - myData[a]);
     let full_values = full_labels.map(x => myData[x]).map(x => (x * 100).toFixed(2));
     let data = {
@@ -363,15 +490,19 @@ function _addHeader(table, headers) {
     table.append(row);
 }
 
-function _addRow(table, data,student) {
+function _addRow(self,table, data,student) {
     //adds data to table element
     let row = $('<tr/>');
     for (let i = 0; i < data.length; i++) {
         row.append(`<td>${data[i]}</td>`);
     }
+
+    //adding popup functionality
     row.on("click",(e=>{
-        makeStudentPopup(student,e);
+        let stats = self.popup_stats();
+        makeStudentPopup(student, stats,e);
     }));
+
     table.append(row);
 
 }

@@ -47,9 +47,22 @@ let graph_colors = [
     "rgba(200,222,235,0.75)"
 ]
 
+//default files
 let urls = [
     "./data/cohorts.csv",
     "./data/questions.json",
     "./data/students.csv",
     "./data/students.json"
 ];
+
+//values for Student info popup
+let raw_info = {
+    "Cohort":"cohort",
+    "Grade":"grade",
+    "School Type": "school_type",
+    "Prev. CS":"prev_cs",
+    "E-mail":"email",
+    "Phone Number":"phone",
+    "Address":"address",
+    "Short Answer":"essay"
+}

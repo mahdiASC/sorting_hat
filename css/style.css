@@ -117,9 +117,9 @@ div[id*='_students']:hover>table>tbody>tr:hover{
  
 /* Inner */
 .popup-inner {
-    max-width:700px;
-    width:90%;
-    padding:40px;
+    width: 85%;
+    height: 85%;
+    padding:1em;
     position:absolute;
     top:50%;
     left:50%;
@@ -135,8 +135,10 @@ div[id*='_students']:hover>table>tbody>tr:hover{
     border: 2px outset #CACAFF;
     /* border-radius:3px; */
 }
-.popup-inner h2{
-    text-shadow: 4px 4px 2px rgba(83, 142, 166, 0.5);
+.popup-inner h3{
+    font-size: 2em;
+    margin-bottom: .5em;
+    text-shadow: 4px 4px 2px rgba(80,193,233,0.5);
 }
  
 /* Close Button */
@@ -165,4 +167,41 @@ div[id*='_students']:hover>table>tbody>tr:hover{
     transform:translate(50%, -50%) rotate(180deg);
     background:rgba(0,0,0,1);
     text-decoration:none;
+}
+
+.popup p{
+    margin: 0;
+}
+
+.popup-inner > .student_info > div{
+    display: inline-block;
+    width: 50%;
+    max-height: 75vh;
+    overflow-y: scroll;
+    vertical-align: top;
+}
+
+.content_holder{
+    text-align: left;
+    line-height: 1em;
+}
+
+.popup-left span.popup_title{   
+    text-align: right;
+    margin-right: 1em;
+    font-family: 'Neuton', serif;
+    font-weight: bold;   
+}
+
+.popup-left span.popup_content{   
+    text-align: left;
+    font-family: 'Eczar', serif;
+    color: black;
+}
+
+.popup canvas{
+    margin: 0 auto 2px auto;
+    border: solid green 1px;
+    border-radius: 17px;
+    padding: 0 5px;
 }
