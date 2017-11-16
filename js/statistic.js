@@ -10,7 +10,7 @@ class Statistic {
     }
 
     student_stats() {
-        //calculates metadata on all students
+        //calculates metadata on array of students
         this.s_stats = this.calc_stats(this.students);
     }
 
@@ -59,6 +59,16 @@ class Statistic {
             "avg": this.unique_array_prop(focus.map(x => x.school_type))
         }
         return output;
+    }
+
+    popup_stats(){
+        let output = {};
+        let students = Student.all;
+        // trait stats
+        // gpa
+        // 
+
+        output[""]: this.unique_array_prop(focus.map(x => x.school_type))
     }
 
     unique_array_counts(arr) {
