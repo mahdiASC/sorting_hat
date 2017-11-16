@@ -44,7 +44,7 @@ p{
     border: green 1px solid;
     width: 227px;
     display: inline-block;
-    height: 333px;
+    /* height: 333px; */
     font-size: 13px;
 }
 header > img{

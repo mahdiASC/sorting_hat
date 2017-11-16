@@ -130,8 +130,13 @@ class Statistic {
             "Grade",
             "Prev. CS"
         ]
-
+        
         this.cohort_stats();
+
+        //adding metadata
+        this.createMetaData(stats,stats_proper);
+
+        //adding cohorts
         for (let name of Object.keys(this.c_stats)) {
 
             //setting up container
@@ -223,6 +228,7 @@ class Statistic {
             }
         }
 
+        //adding waitlist
         this.createWaitList();
         addAscDescFunctionality();
     }
@@ -241,7 +247,7 @@ class Statistic {
         title.append(`<h2>Waiting List</h2>`); //name of cohort
         title.append(`<h4>Size: ${waitlisted.length}</h4>`); //class size
 
-        let student_container = $(`<div id="waitlisted" />`);
+        let student_container = $(`<div id="waitlisted_students" />`);
         article.append(student_container);
         let s_title = $("<div/>");
         s_title.append(`<h2>Student info for Waitlisted</h2>`);
@@ -275,6 +281,66 @@ class Statistic {
             ];
             _addRow(this,waitlist_table, s_data, student);
         }
+    }
+
+    createMetaData(stats,stats_proper){
+        // calculates stats for across all students
+        let totals = {};
+        let students_temp = Cohort.all.map(cohort=>cohort.class);
+        let students = [];
+
+        for(let s = 0; s < students_temp.length; s++){
+            students = students.concat(students_temp[s]);
+        }
+
+        let stats_data_raw = this.calc_stats(students);
+        
+
+        // setting up container
+        let article = $("<article />");
+        $(".statContainer").append(article); //need to make first to
+
+        //title
+        let title = $("<header/>");
+
+        title.append(`<h2>All Cohorts</h2>`); //name of cohort
+        title.append(`<h4>Number of students: ${sumArray(Cohort.all.map(x=>x.class.length))}</h4>`); //class size
+        // title.append(`<p>Average Discontent Deviation: ${Math.round(avgArray(students.map(x=>x.discontent.avg)))}</h2>`); //happiness of classes
+        article.append(title);
+
+        let graphs_container = $('<div class="graphs_container"/>');
+        article.append(graphs_container);
+
+            for (let i = 0; i < stats.length; i++) {
+                //graph head w/graph
+                let stat = stats[i];
+                let stats_obj = stats_data_raw[stat].avg;
+                
+                let thumbnail = $('<div class="stat_graph"/>');
+                graphs_container.append(thumbnail);
+                let thumb_head = $('<div class="thumb_head"/>');
+                thumb_head.append(`<header>${stats_proper[i]}</header>`);
+                thumbnail.append(thumb_head);
+                thumbnail.append(`<div class="chart-container"><canvas id="meta_${stat}"></canvas></div>`);
+                makeGraph(`meta_${stat}`, stats_obj);
+
+                //graph stats
+                
+                let stat_keys = Object.keys(stats_obj).sort((a, b) => stats_obj[b] - stats_obj[a]);
+                let listo = $("<table/>");
+                let list_head = $(`<tr><th>${stats_proper[i]}</th><th>Percentage(%)</th></tr>`);
+                listo.append(list_head);
+                for (let s = 0; s < stat_keys.length; s++) {
+                    let info = stat_keys[s];
+                    let perc = stats_obj[info];
+                    let row = $("<tr/>");
+                    row.append(`<td>${info}</td>`);
+                    row.append(`<td>${(perc*100).toFixed(2)}%</td>`);
+                    listo.append(row);
+                }
+
+                thumbnail.append(listo);
+            }
     }
     
     scoreHappiness(cohort) {
