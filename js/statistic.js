@@ -189,7 +189,12 @@ class Statistic {
             let student_container = $(`<div id=${name}_students />`);
             article.append(student_container);
             let s_title = $("<div/>");
-            s_title.append(`<h2>Student info for ${capFirst(name)}</h2>`);
+            s_title.append(`<h2 data-id="${name}_students">Student info for ${capFirst(name)}</h2>`);
+            
+            //adding functionality to slide down/up
+            s_title.find("h2").on("click",function(e){
+                slideTable(this);
+            });
             student_container.append(s_title);
 
             //student list
@@ -250,7 +255,12 @@ class Statistic {
         let student_container = $(`<div id="waitlisted_students" />`);
         article.append(student_container);
         let s_title = $("<div/>");
-        s_title.append(`<h2>Student info for Waitlisted</h2>`);
+        s_title.append(`<h2 data-id="waitlisted_students">Student info for Waitlisted</h2>`);
+
+        //adding slide functionality
+        s_title.find("h2").on("click",function(e){
+            slideTable(this);
+        });
         student_container.append(s_title);
         
         let waitlist_table = $(`<table />`);
@@ -387,7 +397,7 @@ let makeStudentPopup = function(student,stats,e){
     let titles = Object.keys(raw_info);
     for(let w = 0; w<titles.length; w++){
         let title = titles[w];
-        let content = student[raw_info[title]];
+        let content = student[raw_info[title]] || "[Waitlisted]";
         left_content.append(`<div class="content_holder"><span class="popup_title">${title}:</span><span class="popup_content">${content}</span></div>`);
     }
     // graphs

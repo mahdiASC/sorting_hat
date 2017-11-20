@@ -4,6 +4,7 @@
 let max_seconds = max_travel_time * 3600;
 let priority_list = priorities.map(x => Priority.find_by_name(x));
 let delay = 1000*secDelay;
+let rec_val = rec_bonus/100;
 
 /////////////
 // HELPERS //
@@ -41,3 +42,12 @@ let makeTextFile = function (file_name,text) {
     }));
     return text;
 };
+var x;
+//tables slide up and down
+function slideTable(h2) {
+    let head_data = $(h2).attr("data-id");
+    let table = $($(`#${head_data}`).find("table")[0]);
+    let trs = table.find("tr");
+
+    $(trs).slideToggle();
+}

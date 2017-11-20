@@ -3,8 +3,14 @@
 /* font-family: 'Eczar', serif; */
 /* font-family: 'Neuton', serif; */
 article{
-    border: red 1px solid;
     padding-top: .5em;
+    margin: 10px;
+    background: #fff;
+    color: #50c1e9;
+    line-height: 1.3em;
+    border: 2px dashed #50c1e9;
+    border-radius: 10px;
+    box-shadow: 0 0 0 4px #50c1e9, 2px 1px 6px 4px rgba(10, 10, 0, 0.5);
 }
 
 body{
@@ -12,11 +18,17 @@ body{
 }
 
 article>header{
-    border: blue 1px solid;
+    margin-bottom: .5em;
 }
 
 header p{
     margin: 0;
+    font-size: 12px;
+}
+
+.thumb_head header{
+    font-size: 1.5em;
+    font-weight: bold;
 }
 
 h1,h2,h3,h4{
@@ -40,11 +52,22 @@ p{
     margin-top: .5em;
 }
 
+[id*='_students'] > div > h2{
+    padding: 0 12px;
+    cursor: pointer;
+    border: 2px dashed #50c1e9;
+    border-radius: 10px;
+    box-shadow: 0 0 0 4px #50c1e9, 2px 1px 6px 4px rgba(10, 10, 0, 0.5);
+    display: inline;
+}
+
+#waitlisted_students >div{
+    margin-top: 1em;
+}
 .stat_graph{
-    border: green 1px solid;
     width: 227px;
     display: inline-block;
-    /* height: 333px; */
+    margin: 0 2px;
     font-size: 13px;
 }
 header > img{
@@ -53,7 +76,6 @@ header > img{
 /* cool table */
 
 table {
-    border: blue 2px dotted;
     display: inline-table;
     margin: 1em 0;
     width: 100%;
@@ -63,9 +85,15 @@ table {
     border-radius: 10px;
     border: 1px solid #167F92;
   }
+
   table tr {
     border: 1px solid #D9E4E6;
   }
+  
+  div[id*='_students'] tr{
+    display: none;
+}
+
   table tr:nth-child(odd) {
     background-color: #EAF3F3;
   }
@@ -99,7 +127,11 @@ table {
   .asc:after {  content: "\25B2"; }
   .desc:after { content: "\25BC"; }
 
-div[id*='_students']:hover>table>tbody>tr:hover{
+  [id*='_students'] table{
+      border: none;
+  }
+
+div[id*='_students']>table>tbody>tr:not(:first-child):hover{
     color: rgb(80,193,233);
     text-decoration: underline;
     cursor: pointer;
@@ -216,3 +248,13 @@ div[id*='_students']:hover>table>tbody>tr:hover{
 .popup .student_info{
     height: 89%;
 }
+
+/* footer */
+footer {
+    padding: 35px 0px;
+  }
+  
+  .copyright p {
+    text-align: center;
+    color: darkgoldenrod;;
+  }

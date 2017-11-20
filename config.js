@@ -10,9 +10,11 @@ let max_travel_time = 1; //max travel time to each cohort from student's home (h
 let minority_rate = 0.8; //the percentage of brown students per cohort (this is rounded down by minority_leeway students as a minimum)
 let minority_leeway = 2; //# of students that lowers the bar for minority_rate 
 let grade_leeway = 2; //# of students that lowers the bar for grade level disparity (between 10th and 11th);
-let white_threshold = 0; //percentage of white applicants we will consider
-let rec_bonus = 0; //percentage reduction in discontent deviation for students who come recommended
-let useStudentJSON = true; //if false, will allos download of student JSON file
+
+// let white_threshold = 0; //percentage of white applicants we will consider
+let rec_bonus = 10; //percentage reduction in discontent deviation for students who come recommended (the higher this number, the more likely a recommended student will get sorted into a cohort);
+
+// let useStudentJSON = true; //if false, will allos download of student JSON file
 
 /////////
 // API //
@@ -20,7 +22,7 @@ let useStudentJSON = true; //if false, will allos download of student JSON file
 let api_key = 'AIzaSyDlA_pTF7IbYhUehFHwmZZZW9Cs9GbVGS8';
 let secDelay = 1; //delay in seconds for api call
 let splice_number = 100; //number of students per API call (max 100)
-let wantDownloads = true;
+let wantDownloads = false;
 //////////////
 // DEFAULTS //
 //////////////

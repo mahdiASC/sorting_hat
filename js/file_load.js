@@ -134,6 +134,11 @@ class FileLoader {
     }
 
     startSort() {
+        // showcasing randomly generated students and cohorts - OMIT!
+        let dummy = new DummyData;
+        dummy.randCohorts();
+        dummy.randStudents();
+
         //actually begins sorting
         new Sort; //NOTE: a bit unnecessary if cohorts are already filled
 

@@ -91,6 +91,10 @@ class Cohort extends _base {
             let diff = Math.abs(student.stats[key] - this.ideal_stats[key]);
             score += Math.pow(diff, 2);
         }
+
+        //including recommendation affect
+        score *= 1 - rec_val;
+
         //adding cohort to student's list
         student.scores.push({
             "cohort": this.name,
@@ -177,6 +181,14 @@ class Cohort extends _base {
     fullcheck() {
         // returns true if class full
         return this.class.length >= this.capacity;
+    }
+
+    //for randomly reassinging non-vital parameters
+    modifiedWith(params){
+        for(let param of Object.keys(params)){
+            this[param]= params[param];
+        }
+        return this;
     }
 }
 

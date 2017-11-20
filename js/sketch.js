@@ -23,7 +23,8 @@ let student_params = [
     "s4",
     "essay",
     "essay_score",
-    "logic_score"
+    "logic_score",
+    "img"
 ]
 let cohort_params = [
     "name",
@@ -107,7 +108,7 @@ function DummyData(){
         'Southeast Asian': 5
     };
     
-    this.newStudent = function() {
+    this.newStudent = function(student) {
         p = [];
         p.push(randName(2));
         p.push(randName() + "@gmail.com");
@@ -134,6 +135,8 @@ function DummyData(){
         p.push(randParagraph());
         p.push(myRandom(10));
         p.push(myRandom(10));
+        p.push("placeholder.jpg");
+
         if(p.length!=student_params.length){
             throw new Error(`Student params are wrong length: ${p.length} indead of ${student_params.length}`);
         }
@@ -141,10 +144,15 @@ function DummyData(){
         for(let i = 0; i <student_params.length; i++){
             params[student_params[i]] = p[i];
         }
-        return new Student(params);
+
+        if(student){
+            return student.modifiedWith(params);
+        }else{
+            return new Student(params);
+        }
     }
     
-    this.newCohort = function() {
+    this.newCohort = function(cohort) {
         let p = [];
         p.push(randName());
         p.push(myRandom(15, 25));
@@ -164,7 +172,11 @@ function DummyData(){
         for(let i = 0; i <cohort_params.length; i++){
             params[cohort_params[i]] = p[i];
         }
-        return new Cohort(params);
+        if(cohort){
+            return cohort.modifiedWith(params);
+        }else{
+            return new Cohort(params);
+        }
     }
     
     this.studentPick= function(num){
@@ -202,6 +214,24 @@ function DummyData(){
     }
 
 }
+
+DummyData.prototype.randCohorts = function(){
+    for(let i = 0; i < Cohort.all.length;i++){
+        this.newCohort(Cohort.all[i]);
+    }
+}
+
+DummyData.prototype.randStudents = function(){
+    for(let i = 0; i < Student.all.length;i++){
+        let student = this.newStudent(Student.all[i]);
+        for(let w = 0; w < Cohort.all.length;w++){
+            student.durations[w].cohort = Cohort.all[w].name;
+            student.scores[w].cohort = Cohort.all[w].name;
+        }
+    }
+}
+
+
 
 //creates a download button and file for any plain text
 makeTextFile = function (file_name,text) {

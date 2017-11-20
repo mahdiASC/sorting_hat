@@ -57,6 +57,14 @@ class Student extends _base {
     selfSort() {
         this.scores = this.scores.sort((a, b) => a.score - b.score);
     }
+
+    //for randomly reassinging non-vital parameters
+    modifiedWith(params){
+        for(let param of Object.keys(params)){
+            this[param]= params[param];
+        }
+        return this;
+    }
 }
 
 Student.fullSort = function () {
