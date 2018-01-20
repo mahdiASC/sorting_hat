@@ -11,7 +11,7 @@ let student_params = [
     "grade",
     "school_type",
     "prev_cs",
-    "rec",
+    "rec", //recommendation, true of false
     "q1",
     "q2",
     "q3",

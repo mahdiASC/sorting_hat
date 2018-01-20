@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Sorting Hat</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/file_load.css">
+</head>
+
+<body>
+
+    <div id="page-wrapper">
+
+        <h1>Input Student data for Cohort sorting</h1>
+        <div class="instructions">
+            <h2>INSTRUCTIONS</h2>
+            <h3>The file requires a unique setup beforehand</h3>
+            <h5>Upload Survey Monkey CSV to Google Spreadsheet</h5>
+            <h5>Make edits:</h5>
+            <ul>
+                <li>Add "readscore" column with a value 0-3</li>
+                <li>Add "rec" column with a value TRUE or FALSE</li>
+                <li>Add "star" column with a value TRUE or FALSE</li>
+            </ul>
+            <h5>Download as tab-separated values (TSV), then upload that .tsv file below</h5>
+        </div>
+
+        <div class="fileUpload btn btn-primary">
+            <span>Select a Student file (TSV):
+                <br>
+                <span class="file_text"> Default: 'dummy_data.tsv'</span>
+            </span>
+            <input type="file" id="student_file" class="upload" />
+        </div>
+
+        <button onclick="new Sort">Submit</button>
+    </div>
+    <div class="mainContainer">
+        <div class="top">
+            <h1>ASC 2018 Cohort Sorting Hat Results</h1>
+        </div>
+        <div class="statContainer">
+            <!-- Will be populated by cohort stats -->
+        </div>
+    </div>
+
+    <!-- /////// -->
+    <!-- SCRIPTS -->
+    <!-- /////// -->
+    <!-- p5  -->
+    <!-- <script src="./js/p5.js"></script> -->
+
+    <script src="./js/jquery.min.js"></script>
+
+    <!-- papaparse -->
+    <script src="./js/papaparse.js"></script>
+
+    <!-- chart.js cdn -->
+    <script src="./js/chart.js"></script>
+
+    <!-- custom scripts -->
+    <script src="./js/mahdi.js"></script>
+    
+    <script src="./js/_base.js"></script>
+    <script src="./js/_student.js"></script>
+    <script src="./js/_cohort.js"></script>
+
+    <script src="./_config.js"></script>
+    <script src="./js/_helpers.js"></script>
+    <script src="./js/_sort.js"></script>
+
+</body>
+
+</html>

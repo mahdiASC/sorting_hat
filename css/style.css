@@ -22,8 +22,16 @@ header p{
 h1,h2,h3,h4{
     color:rgb(80,193,233);
     font-family: 'Eczar', serif;
-    margin: 0;
+    margin: 10px;
     line-height: 1em;
+}
+h3{
+    line-height: 1.6em;
+}
+
+h5{
+    margin: 5px;
+    text-align: left;    
 }
 
 p{
@@ -165,4 +173,20 @@ div[id*='_students']:hover>table>tbody>tr:hover{
     transform:translate(50%, -50%) rotate(180deg);
     background:rgba(0,0,0,1);
     text-decoration:none;
+}
+
+li{
+    list-style-type: decimal;
+    text-align: left;    
+}
+ul{
+    margin: 0;
+}
+
+.instructions{
+    margin: 25px auto;
+    width: 45%;
+    border: 2px solid rgb(80,193,233);
+    border-radius: 25px;
+    padding: 10px;
 }
