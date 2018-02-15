@@ -148,7 +148,6 @@ class Graph{
         
         sections.each((i,v)=>{
             // length of each table
-            console.log($(v).children("table").children("tbody"));
             let l =$(v).find("tr").length-1;
             let h2 = $(v).find("h4").text(`Total: ${l}`);
         })

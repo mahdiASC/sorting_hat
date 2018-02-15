@@ -52,10 +52,14 @@ class Sort {
                 //custom file loaded
                 //check for correct file extension
                 let re = new RegExp(".tsv");
+                let re2 = new RegExp(".csv");
+
                 if (re.exec(file.name)) {
                     this.loadNewData(file).then(resolve);
-                } else {
-                    reject(`File "${file.name}" is not a TSV`);
+                }else if (re2.exec(file.name)){
+                    this.loadDefaultData(file,true).then(resolve);
+                }else {
+                    reject(`File "${file.name}" is not a TSV or CSV`);
                 }
             } else {
                 // loading defaults
@@ -69,23 +73,30 @@ class Sort {
                 //custom file loaded
                 //check for correct file extension
                 let re = new RegExp(".tsv");
-                if (re.exec(file_2.name)) {
-                    this.loadNewData(file_2).then(resolve);
-                } else {
-                    reject(`File "${file.name}" is not a TSV`);
-                }
-            }
+                let re2 = new RegExp(".csv");
+
+                if (re.exec(file.name)) {
+                    this.loadNewData(file).then(resolve);
+                }else if (re2.exec(file.name)){
+                    this.loadDefaultData(file,true).then(resolve);
+                }else {
+                    reject(`File "${file.name}" is not a TSV or CSV`);
+                }            }
         })
     }
 
-    loadDefaultData(file) {
+    loadDefaultData(file,flag=true) {
         return new Promise((resolve, reject) => {
             // file is a string of file location
+            let delim = "	";
+            if(flag){
+                delim = ",";
+            }
             $.ajax({
                 url: file,
                 success: (data) => {
                     Papa.parse(data, {
-                        delimiter: "	",
+                        delimiter: delim,
                         complete: (data) => {
                             // result is an array of each row of the spreadsheet
                             let result = data.data;
