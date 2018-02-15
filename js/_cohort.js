@@ -1,4 +1,8 @@
 class Cohort extends _base {
+    constructor(params){
+        super(params);
+    }
+
     setStudentDistance(students){
         // takes array of students and assigns proper timed distance from cohort
         return new Promise((resolve, reject)=>{
@@ -26,9 +30,39 @@ class Cohort extends _base {
                         }
                         resolve();
                     }
-                })
-            }, delay);
+                }).fail(err=>console.log(err));
+            }, secDelay);
         })
+    }
+
+    setStudentPool(students){
+        // given array of students, adds students to pool when within range (has a range in student.travel_times)
+        this.pool = students.filter(x=>x.travel_times.some(y=>y.cohort===this.name));
+        keepValids();
+    }
+
+    setStudentCohortScores(){
+
+    }
+
+    keepValids(){
+        // filters pool for students that are assigned this cohort or have no cohort
+        this.pool = this.pool.filter(x=>!x.cohort||x.cohort==this.name);
+    }
+
+    get class(){
+        // returns students in the class from sorted pool of all elegable students
+        keepValids();
+        return this.pool.slice(0,21);
+    }
+    
+    get waitlist(){
+        // returns students in the class from sorted pool of all elegable students
+        keepValids();
+        return this.pool.slice(22);
     }
 }
 
+Cohort.setPools = function(students){
+    Cohort.all.forEach(function(x){return x.setStudentPool(students)});
+}

@@ -14,7 +14,7 @@
 
     <div id="page-wrapper">
 
-        <h1>Input Student data for Cohort sorting</h1>
+        <h1>Input Student data for Student Selection Suggestions</h1>
         <div class="instructions">
             <h2>INSTRUCTIONS</h2>
             <h3>The file requires a unique setup beforehand</h3>
@@ -24,8 +24,10 @@
                 <li>Add "readscore" column with a value 0-3</li>
                 <li>Add "rec" column with a value TRUE or FALSE</li>
                 <li>Add "star" column with a value TRUE or FALSE</li>
+                <li>Add relevant stat columns (should be same for cohorts) with a value 0-3</li>
             </ul>
             <h5>Download as tab-separated values (TSV), then upload that .tsv file below</h5>
+            <h5>You can upload 2 files</h5>
         </div>
 
         <div class="fileUpload btn btn-primary">
@@ -33,9 +35,16 @@
                 <br>
                 <span class="file_text"> Default: 'dummy_data.tsv'</span>
             </span>
-            <input type="file" id="student_file" class="upload" />
+            <input type="file" id="student_file_1" class="upload" />
         </div>
 
+        <div class="fileUpload btn btn-primary">
+            <span>Optional - Select another Student file (TSV):
+                <br>
+                <span class="file_text"> Default: 'dummy_data.tsv'</span>
+            </span>
+            <input type="file" id="student_file_2" class="upload" />
+        </div>
         <button onclick="new Sort">Submit</button>
     </div>
     <div class="mainContainer">
@@ -70,6 +79,7 @@
 
     <script src="./_config.js"></script>
     <script src="./js/_helpers.js"></script>
+    <script src="./js/graph.js"></script>
     <script src="./js/_sort.js"></script>
 
 </body>

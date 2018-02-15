@@ -64,11 +64,33 @@ class Statistic {
     popup_stats(){
         let output = {};
         let students = Student.all;
+        
         // trait stats
-        // gpa
-        // 
-
-        output[""]: this.unique_array_prop(focus.map(x => x.school_type))
+        output["stats"] = {}
+        
+        students.forEach(x=>{
+            let stat_names =  Object.keys(x._s);
+            let i;
+            for(i = 0; i < stat_names.length; i++){
+                let stat = stat_names[i];
+                if(!output["stats"][stat]){
+                    output["stats"][stat]=0;
+                }
+                output["stats"][stat] += x._s[stat];
+            }
+        })
+        
+        let stats = Object.keys(output["stats"]);
+        for (let x = 0; x < stats.length; x++) {
+            let stat = stats[x];
+            output["stats"][stat] = output["stats"][stat] / students.length;
+        }
+    
+        // gpa, logic score, read score
+        output["GPA"] = avgArray(students.map(x => x.gpa));
+        output["Logic Score"] = avgArray(students.map(x => x.logic));
+        output["Read Score"] = avgArray(students.map(x => x.essay_score));
+        return output;
     }
 
     unique_array_counts(arr) {

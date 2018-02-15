@@ -64,7 +64,10 @@ function randProb(obj){
 var capFirst = function(string, flag = false, split = " "){
 	//with 1 string argument, returns a string with first letter capitalized
 	//with flag = true, will return string of all first letters after string splitting using split
-	if (flag){
+  if (string.length===0){
+    return string;
+  }
+  if (flag){
 		var temp = string.split(split);
 		var output = [];
 		for(var i in temp){
@@ -366,8 +369,32 @@ function findDuplicates(data) {
     return result;
   }
 
+
+  
+let unique_array_counts = function(arr) {
+    //returns object of counts for array of strings
+    let output = {};
+    arr.forEach(x => output[x] = !!output[x] ? output[x] + 1 : 1);
+    return output;
+}
+
+let unique_array_prop = function(arr) {
+    //return object of proportions for each string
+    let output = {};
+    let counts = unique_array_counts(arr);
+    let sum = 0;
+    for (let x of Object.keys(counts)) {
+        sum += counts[x];
+    }
+    for (let x of Object.keys(counts)) {
+        output[x] = counts[x] / sum;
+    }
+    return output;
+}
+
 // Export node module.
 if ( typeof module !== 'undefined' && module.hasOwnProperty('exports') )
 {
     module.exports = capFirst;
 }
+

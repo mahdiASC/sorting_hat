@@ -17,6 +17,10 @@ class Student extends _base {
         
         this.travel_times = this.travel_times || [];
         this.rejection_messages = this.rejection_messages || [];
+
+        this.preference = this.preference || [];
+
+        this.name = `${capFirst(this.first_name.toLowerCase(), true)} ${capFirst(this.last_name.toLowerCase(), true)}`;
     }
 }
 

@@ -6,6 +6,7 @@ class _base {
             this.constructor.all = []
         }
         this.constructor.all.push(this);
+        this.params=params;
         for (let i in params) {
             this[i] = params[i];
         }
@@ -22,7 +23,8 @@ _base.createFrom2DArray = function(arr, header, properties){
             let property_index = header.indexOf(j);
             let value = row[property_index];
             // issue with duplicate column names!!!
-            while(!value && property_index>0){
+            // if (property_name=="essay_raw") console.log();
+            if(header.indexOf(j,property_index+1)>-1){
                 property_index = header.indexOf(j, property_index+1);
                 value = row[property_index];
             }
