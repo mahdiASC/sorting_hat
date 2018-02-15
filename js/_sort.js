@@ -81,7 +81,8 @@ class Sort {
                 //     this.loadDefaultData(file,true).then(resolve);
                 // }else {
                 //     reject(`File "${file.name}" is not a TSV or CSV`);
-                // }            }
+                // }            
+            }
         })
     }
 
