@@ -47,20 +47,21 @@ class Sort {
     loadFiles() {
         return new Promise((resolve, reject) => {
             let file = document.getElementById("student_file_1").files[0];
+            let re = new RegExp(".tsv");
+            let re2 = new RegExp(".csv");
 
             if (file) {
                 //custom file loaded
                 //check for correct file extension
-                // let re = new RegExp(".tsv");
-                // let re2 = new RegExp(".csv");
+                
 
-                // if (re.exec(file.name)) {
+                if (re.exec(file.name)) {
                     this.loadNewData(file).then(resolve);
-                // }else if (re2.exec(file.name)){
-                //     this.loadDefaultData(file,true).then(resolve);
-                // }else {
-                //     reject(`File "${file.name}" is not a TSV or CSV`);
-                // }
+                }else if (re2.exec(file.name)){
+                    this.loadDefaultData(file,true).then(resolve);
+                }else {
+                    reject(`File "${file.name}" is not a TSV or CSV`);
+                }
             } else {
                 // loading defaults
                 this.loadDefaultData(student_data[0]).then(()=>this.loadDefaultData(student_data[1])).then(resolve);
@@ -72,21 +73,18 @@ class Sort {
             if (file_2) {
                 //custom file loaded
                 //check for correct file extension
-                // let re = new RegExp(".tsv");
-                // let re2 = new RegExp(".csv");
-
-                // if (re.exec(file.name)) {
-                    this.loadNewData(file).then(resolve);
-                // }else if (re2.exec(file.name)){
-                //     this.loadDefaultData(file,true).then(resolve);
-                // }else {
-                //     reject(`File "${file.name}" is not a TSV or CSV`);
-                // }            
+                if (re.exec(file_2.name)) {
+                    this.loadNewData(file_2).then(resolve);
+                }else if (re2.exec(file_2.name)){
+                    this.loadDefaultData(file_2,true).then(resolve);
+                }else {
+                    reject(`File "${file_2.name}" is not a TSV or CSV`);
+                }            
             }
         })
     }
 
-    loadDefaultData(file,flag=true) {
+    loadDefaultData(file,flag=false) {
         return new Promise((resolve, reject) => {
             // file is a string of file location
             let delim = "	";

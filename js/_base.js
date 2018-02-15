@@ -15,6 +15,7 @@ class _base {
 
 _base.createFrom2DArray = function(arr, header, properties){
     // given 2d array of all rows of data, will use properties to find and properly create new objects
+    console.log(arr);
     for(let i of arr){
         let output = {};
         for(let j of Object.keys(properties)){
