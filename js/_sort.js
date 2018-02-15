@@ -30,7 +30,7 @@ class Sort {
         this.loadFiles()
 
         // hack()
-            .then(() => this.loadDefaultData(cohort_data))
+            // .then(() => this.loadDefaultData(cohort_data))
             .then(() => this.filterOutInvalids(), msg => { throw new Error(msg) })
             // .then(()=>this.addDistances()) // remove with hack()
             // .then(() => this.filterOutDistant())
